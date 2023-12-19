@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="serve_socket"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\..\pkg\;CMake Files\..\..\..\..\..\..\..\pkg\qt\;CMake Files\..\..\..\..\..\..\..\pkg\qt\5.14.2\;CMake Files\..\..\..\..\..\..\..\pkg\qt\5.14.2\gcc_64\;CMake Files\..\..\..\..\..\..\..\pkg\qt\5.14.2\gcc_64\lib\;CMake Files\..\..\..\..\..\..\..\pkg\qt\5.14.2\gcc_64\lib\cmake\;CMake Files\..\..\..\..\..\..\..\pkg\qt\5.14.2\gcc_64\lib\cmake\Qt5Core\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v all"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v rebuild_cache"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v edit_cache"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="serve_socket">
+				<Option output="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug/serve_socket" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DQT_CORE_LIB"/>
+					<Add directory="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug"/>
+					<Add directory="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/serve_socket"/>
+					<Add directory="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug/serve_socket_autogen/include"/>
+					<Add directory="/home/lx/Documents/lx/pkg/qt/5.14.2/gcc_64/include"/>
+					<Add directory="/home/lx/Documents/lx/pkg/qt/5.14.2/gcc_64/include/QtCore"/>
+					<Add directory="/home/lx/Documents/lx/pkg/qt/5.14.2/gcc_64/./mkspecs/linux-g++"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v serve_socket"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="serve_socket/fast">
+				<Option output="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug/serve_socket" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DQT_CORE_LIB"/>
+					<Add directory="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug"/>
+					<Add directory="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/serve_socket"/>
+					<Add directory="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug/serve_socket_autogen/include"/>
+					<Add directory="/home/lx/Documents/lx/pkg/qt/5.14.2/gcc_64/include"/>
+					<Add directory="/home/lx/Documents/lx/pkg/qt/5.14.2/gcc_64/include/QtCore"/>
+					<Add directory="/home/lx/Documents/lx/pkg/qt/5.14.2/gcc_64/./mkspecs/linux-g++"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v serve_socket/fast"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="serve_socket_autogen">
+				<Option working_dir="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v serve_socket_autogen"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug/serve_socket_autogen/mocs_compilation.cpp">
+			<Option target="serve_socket"/>
+		</Unit>
+		<Unit filename="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/serve_socket/include/platform.h">
+			<Option target="serve_socket"/>
+		</Unit>
+		<Unit filename="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/serve_socket/include/timer.h">
+			<Option target="serve_socket"/>
+		</Unit>
+		<Unit filename="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/serve_socket/main.cpp">
+			<Option target="serve_socket"/>
+		</Unit>
+		<Unit filename="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/serve_socket/src/platform.cpp">
+			<Option target="serve_socket"/>
+		</Unit>
+		<Unit filename="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/serve_socket/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/serve_socket/../../../../../../../pkg/qt/5.14.2/gcc_64/lib/cmake/Qt5Core/Qt5CoreConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\pkg\qt\5.14.2\gcc_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/serve_socket/../../../../../../../pkg/qt/5.14.2/gcc_64/lib/cmake/Qt5Core/Qt5CoreConfigExtras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\pkg\qt\5.14.2\gcc_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/serve_socket/../../../../../../../pkg/qt/5.14.2/gcc_64/lib/cmake/Qt5Core/Qt5CoreConfigExtrasMkspecDir.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\pkg\qt\5.14.2\gcc_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/serve_socket/../../../../../../../pkg/qt/5.14.2/gcc_64/lib/cmake/Qt5Core/Qt5CoreConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\pkg\qt\5.14.2\gcc_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/serve_socket/../../../../../../../pkg/qt/5.14.2/gcc_64/lib/cmake/Qt5Core/Qt5CoreMacros.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\pkg\qt\5.14.2\gcc_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
