@@ -1,4 +1,0 @@
-/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug/CMakeFiles/rebuild_cache.dir
-/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug/CMakeFiles/edit_cache.dir
-/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug/CMakeFiles/serve_socket.dir
-/home/lx/Documents/lx/work/hust/platform/connect/cpp_test/serve_cpp/build-serve_socket-Desktop_Qt_5_14_2_GCC_64bit-Debug/CMakeFiles/serve_socket_autogen.dir
