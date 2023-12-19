@@ -2,7 +2,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 import moderngl
 
-class Axis:
+class Axis1:
     def __init__(self, seq='zyx', scale=1):
         self.xyz = np.zeros(3)
         self.angles = np.zeros(3)
@@ -43,7 +43,7 @@ class Axis:
         self.scale = scale
 
 if __name__ == '__main__':
-    a = Axis()
+    a = Axis1()
     a.calucu()
 
     a.set_axis(None, np.array([0, 0, 1])*(np.pi/4))
