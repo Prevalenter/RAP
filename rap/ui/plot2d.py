@@ -11,7 +11,6 @@ from matplotlib.figure import Figure
 from matplotlib.backend_bases import MouseButton
 
 class MplCanvas(FigureCanvasQTAgg):
-
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         self.figure = Figure(figsize=(width, height), dpi=dpi)
         self.axes = self.figure.add_subplot(111)

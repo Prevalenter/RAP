@@ -1,5 +1,7 @@
 import sys
 import time
+
+import numpy as np
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout,\
     QRadioButton, QGroupBox, QGridLayout, QPlainTextEdit, QSpinBox, QComboBox, QDoubleSpinBox
 
@@ -9,7 +11,8 @@ from connect.client import Client
 
 pre_action_dict = {
     'back zero': [0.4, 0.0, 0.8, 3.14159, 0, 3.14159],
-    'to hole': [0.6363, 0.15408, 0.18055, 3.14159, 0, 3.14159]
+    # 'to hole': [0.6363, 0.15408, 0.18055, 3.14159, 0, 3.14159],
+    'to hole': [0.6363, 0.15408, 0.190, 3.14159, 0, 3.14159]
 }
 
 class ConnectWidget(QWidget):
@@ -21,6 +24,9 @@ class ConnectWidget(QWidget):
 
         self.data_xyz_init = False
         self.data_agnle_init = False
+
+        self.ft_traj = []
+
 
         self.ui_init()
 
@@ -79,26 +85,26 @@ class ConnectWidget(QWidget):
         preset_box.setLayout(preset_layout)
         preset_box.setMaximumHeight(120)
 
-        state_box = QGroupBox("Robot state")
-        layout_state = QGridLayout()
-
-        self.angle_le_list = []
-
-        for i in range(2):
-            for j in range(3):
-                layout_state.addWidget(QLabel(f"Joint {2*i+j+1}"), i*2, j)
-                self.angle_le_list.append(QLineEdit(""))
-                layout_state.addWidget(self.angle_le_list[-1], i*2+1, j)
-
-        self.xyz_le_list = []
-        for idx, l in enumerate("XYZABC"):
-
-            layout_state.addWidget(QLabel(l), 4+(idx//3)*2, idx%3)
-            self.xyz_le_list.append(QLineEdit(""))
-            layout_state.addWidget(self.xyz_le_list[-1], 4+(idx//3)*2+1, idx%3)
-
-        state_box.setLayout(layout_state)
-        state_box.setMaximumHeight(240)
+        # state_box = QGroupBox("Robot state")
+        # layout_state = QGridLayout()
+        #
+        # self.angle_le_list = []
+        #
+        # for i in range(2):
+        #     for j in range(3):
+        #         layout_state.addWidget(QLabel(f"Joint {2*i+j+1}"), i*2, j)
+        #         self.angle_le_list.append(QLineEdit(""))
+        #         layout_state.addWidget(self.angle_le_list[-1], i*2+1, j)
+        #
+        # self.xyz_le_list = []
+        # for idx, l in enumerate("XYZABC"):
+        #
+        #     layout_state.addWidget(QLabel(l), 4+(idx//3)*2, idx%3)
+        #     self.xyz_le_list.append(QLineEdit(""))
+        #     layout_state.addWidget(self.xyz_le_list[-1], 4+(idx//3)*2+1, idx%3)
+        #
+        # state_box.setLayout(layout_state)
+        # state_box.setMaximumHeight(240)
 
         angle_set_box = QGroupBox("Angle Set")
         layout_set_angle = QGridLayout()
@@ -160,7 +166,7 @@ class ConnectWidget(QWidget):
         # container.addWidget(angle_set_box)
         container.addWidget(xyz_set_box)
         container.addWidget(Rot_set_box)
-        container.addWidget(state_box)
+        # container.addWidget(state_box)
 
 
         container.addStretch(2)
@@ -182,8 +188,10 @@ class ConnectWidget(QWidget):
             if head=="angles":
                 msg_angle = msg_rcv_slice.split(': ')[-1].split(' ')
                 if len(msg_angle)>=6:
+
                     self.up_ctrl.angle_cur = [float(i) for i in msg_angle[:6]]
-                    self.print_angles_cur()
+
+                    # self.print_angles_cur()
                     self.up_ctrl.update(cur=True)
 
                     if self.data_agnle_init==False:
@@ -196,12 +204,11 @@ class ConnectWidget(QWidget):
             elif head=="xyz":
                 msg_xyz = msg_rcv_slice.split(': ')[-1].split(' ')
                 if len(msg_xyz)>=6:
+
                     self.up_ctrl.xyz_cur = [float(i) for i in msg_xyz[:6]]
-                    self.print_xyz_cur()
+                    self.up_ctrl.axis.set_axis(self.up_ctrl.xyz_cur[:3], self.up_ctrl.xyz_cur[3:])
 
                     if self.data_xyz_init==False:
-                        # for i in range(6):
-                        #     self.spinctrl_xyz_list[i].SetValue(self.up_ctrl.xyz_cur[i])
                         self.up_ctrl.xyz_tgt = self.up_ctrl.xyz_cur
                         self.up_ctrl.update(tgt=True)
                         self.data_xyz_init = True
@@ -209,19 +216,24 @@ class ConnectWidget(QWidget):
             elif head=="ft":
                 msg_ft = msg_rcv_slice.split(': ')[-1].split(' ')
                 if len(msg_ft)>=6:
+
                     self.up_ctrl.ft_cur = [float(i) for i in msg_ft[:6]]
-                    self.print_ft_cur()
+
+                    self.up_ctrl.ft.set_data(self.up_ctrl.ft_cur, self.up_ctrl.xyz_cur)
+
+                    self.ft_traj.append(self.up_ctrl.ft.data)
+
+                    if len(self.ft_traj)%50==0:
+                        print('save')
+                        np.save('ft_traj', np.array(self.ft_traj))
+
 
     def update_tgt(self):
-        # print("conn")
-        # print('in update tgt: ', self.up_ctrl.xyz_tgt)
 
         zero = pre_action_dict['back zero'].copy()
 
         for i in range(6):
-            # self.angle_spin_list[i].setValue(self.up_ctrl.angle_tgt[i])
             self.xyz_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i])
-
 
         for i in range(3):
             self.Rot_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i]-zero[i])
@@ -229,19 +241,18 @@ class ConnectWidget(QWidget):
         self.Rot_spin_list[4].setValue(-(self.up_ctrl.xyz_tgt[4] - zero[4]))
         self.Rot_spin_list[5].setValue((self.up_ctrl.xyz_tgt[3] - zero[3]))
 
-        # print('after update tgt: ', [self.xyz_spin_list[i].value() for i in range(6)])
-
     def print_ft_cur(self):
-        pass
-        # print('print ft cur:', self.up_ctrl.ft_cur)
-    def print_angles_cur(self):
-        for i in range(6):
-            self.angle_le_list[i].setText("%.4f"%(self.up_ctrl.angle_cur[i]))
+        # pass
+        print('print ft cur:', self.up_ctrl.ft_cur)
 
-
-    def print_xyz_cur(self):
-        for i in range(6):
-            self.xyz_le_list[i].setText("%.4f"%(self.up_ctrl.xyz_cur[i]))
+    # def print_angles_cur(self):
+    #     for i in range(6):
+    #         self.angle_le_list[i].setText("%.4f"%(self.up_ctrl.angle_cur[i]))
+    #
+    #
+    # def print_xyz_cur(self):
+    #     for i in range(6):
+    #         self.xyz_le_list[i].setText("%.4f"%(self.up_ctrl.xyz_cur[i]))
 
     def on_mode_radio_btn(self, b):
         # print('on_mode_radio_btn', b.text())
@@ -300,6 +311,8 @@ class ConnectWidget(QWidget):
             # self.up_ctrl.xyz_tgt[i] = (self.spinctrl_xyz_list[i]).GetValue()
             self.up_ctrl.xyz_tgt[i] = self.xyz_spin_list[i].value()
         # print('after apply xyz: ', self.up_ctrl.xyz_tgt)
+
+        self.up_ctrl.axis.set_axis(self.up_ctrl.xyz_tgt[:3], self.up_ctrl.xyz_tgt[3:])
         self.write_tgt()
 
     def on_apply_Rot(self):
@@ -314,9 +327,10 @@ class ConnectWidget(QWidget):
         test[3] = self.Rot_spin_list[5].value() + zero[3]
         test[4] = -self.Rot_spin_list[4].value() + zero[4]
         test[5] = -self.Rot_spin_list[3].value() + zero[5]
-        # print(test)
 
         self.up_ctrl.xyz_tgt = test
+        self.up_ctrl.axis.set_axis(test[:3], test[3:])
+        self.up_ctrl.ft.set_data(self.up_ctrl.ft_cur, test)
         self.write_tgt()
 
     def write_tgt(self):
@@ -332,7 +346,8 @@ class ConnectWidget(QWidget):
             self.client.write(str_tmp)
         else:
             self.up_ctrl.xyz_cur = self.up_ctrl.xyz_tgt
-            self.print_xyz_cur()
+            # self.up_ctrl.
+            # self.print_xyz_cur()
 
         self.up_ctrl.update(tgt=True)
 

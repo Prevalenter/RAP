@@ -20,6 +20,8 @@ import aspose.threed as a3d
 import sys
 sys.path.append('..')
 from ui.ui3d.axis import Axis
+from ui.ui3d.forcesensor import ForceSensor
+
 
 def grid(size, steps):
     # Create grid parameters
@@ -39,9 +41,11 @@ def grid(size, steps):
 
 
 class QGLControllerWidget(QtOpenGL.QGLWidget):
-    def __init__(self, parent=None, up_ctrl=None):
+    def __init__(self, up_ctrl, parent=None):
         self.parent = parent
         super(QGLControllerWidget, self).__init__(parent)
+
+        self.up_ctrl = up_ctrl
 
         # Initialize OpenGL parameters
         self.bg_color = (0.1, 0.1, 0.1, 0.1)
@@ -58,8 +62,9 @@ class QGLControllerWidget(QtOpenGL.QGLWidget):
         self.grid = grid(self.size, self.cell)
         self.grid_alpha_value = 1.0
 
-        self.axis = Axis(scale=0.1)
-        self.axis_ori = Axis()
+        # self.axis = Axis(scale=0.1)
+        # self.axis_ori = Axis()
+        # self.ft = ForceSensor()
 
     def initializeGL(self):
         # Create a new OpenGL context
@@ -162,8 +167,11 @@ class QGLControllerWidget(QtOpenGL.QGLWidget):
         self.vao_reigon.render(moderngl.LINES)
 
 
-        self.axis.render(self)
-        self.axis_ori.render(self)
+        self.up_ctrl.axis.render(self)
+        self.up_ctrl.axis_ori.render(self)
+        self.up_ctrl.ft.render(self)
+
+
         # self.color.value = self.new_color
         # for i in range(3):
         #     self.vao_axis_simple = []
@@ -324,7 +332,7 @@ class Ui3dWindow(QtWidgets.QMainWindow):
 
         self.up_ctrl = up_ctrl
 
-        self.glWidget = QGLControllerWidget(self)
+        self.glWidget = QGLControllerWidget(up_ctrl=up_ctrl)
 
         self.initGUI()
 
@@ -336,8 +344,10 @@ class Ui3dWindow(QtWidgets.QMainWindow):
         # self.glWidget.set_mesh(None)
 
     def update(self):
+        pass
         # print("plot 3d update: ", self.up_ctrl.xyz_cur)
-        self.glWidget.axis.set_axis(xyz=self.up_ctrl.xyz_cur[:3], angles=self.up_ctrl.xyz_cur[3:])
+        # self.glWidget.axis.set_axis(xyz=self.up_ctrl.xyz_cur[:3], angles=self.up_ctrl.xyz_cur[3:])
+        # self.glWidget.ft.set_data(self.up_ctrl.ft_cur)
 
     def sim_sent(self):
         print('sim sent')
@@ -395,12 +405,19 @@ class PlotMainWindow(QWidget):
         super().__init__()
         self.xyz_tgt = [0.5, 0.3, 0, 0, 0, 0]
         self.xyz_cur = [0.45, 0.1, 0, 0, 0, 0]
+        # self.ft_cur = [0]*6
+
+        self.axis = Axis(scale=0.1)
+        self.axis_ori = Axis()
+        self.ft = ForceSensor()
+
         self.plot = Ui3dWindow(up_ctrl=self)
         self.plot.setParent(self)
 
-
     def update(self, tgt=False, cur=False, sent_tgt=False):
         self.plot.update()
+
+        # self.ft_cur
 
 
 if __name__ == '__main__':
