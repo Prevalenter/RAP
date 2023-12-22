@@ -29,11 +29,13 @@ class StateWidget(QWidget):
 
         layout_state.addWidget(QLabel("Joint"), 0, 0)
         layout_state.addWidget(QLabel("XYZ-Rot"), 1, 0)
-        layout_state.addWidget(QLabel("Force-Torque"), 2, 0)
+        layout_state.addWidget(QLabel("FT in Sensor"), 2, 0)
+        layout_state.addWidget(QLabel("FT in Word"), 3, 0)
 
         self.state_le_list = {"joints": [],
                               "xyz": [],
-                              "ft": []}
+                              "ft": [],
+                              "ft_world": []}
         for idx, type in enumerate(self.state_le_list.keys()):
             for j in range(6):
                 self.state_le_list[type].append( QLineEdit("") )
@@ -47,7 +49,7 @@ class StateWidget(QWidget):
         container.addStretch(2)
         self.setLayout(container)
 
-    def update(self, joints=None, xyz=None, ft=None):
+    def update(self, joints=None, xyz=None, ft=None, ft_world=None):
         if joints is not None:
             for i in range(6):
                 # self.state_le_list['joints'][i].set =
@@ -60,6 +62,10 @@ class StateWidget(QWidget):
         if ft is not None:
             for i in range(6):
                 self.state_le_list['ft'][i].setText("%.4f" % (ft[i]))
+
+        if ft_world is not None:
+            for i in range(3):
+                self.state_le_list['ft_world'][i].setText("%.4f" % (ft_world[i]))
 
 class MyWindow(QWidget):
     def __init__(self):

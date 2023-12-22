@@ -31,6 +31,16 @@ class MainWindow(QWidget):
         self.axis_ori = Axis()
         self.ft = ForceSensor()
 
+        self.adapt_force_flag = False
+
+        self.cartesian_work_space= [[0.25, 0.65], # x
+                                    [0.00, 0.50], # y
+                                    [0.20, 1.00], # z
+                                    [-0.60, 0.60], # rot x
+                                    [-0.60, 0.60], # rot y
+                                    [-3.14, 3.14] # rot z
+                                   ]
+
 
         self.control_tab = QTabWidget()
         self.connect_widget = ConnectWidget(self)
@@ -42,14 +52,12 @@ class MainWindow(QWidget):
 
         # self.connect_widget = self.control_widget.connect
 
-
-
         self.state_widget = StateWidget(up_ctrl=self)
 
         if ui_type=='3d':
             self.plot = Ui3dWindow(up_ctrl=self)
             self.plot.setParent(self)
-            self.plot.setMinimumHeight(850)
+            self.plot.setMinimumHeight(800)
         else:
             self.plot = Plot2dWindow(up_ctrl=self)
 
@@ -70,7 +78,7 @@ class MainWindow(QWidget):
         if sent_tgt:
             self.connect_widget.apply_xyz()
         self.plot.update()
-        self.state_widget.update(self.angle_cur, self.xyz_cur, self.ft.ft_sensor)
+        self.state_widget.update(self.angle_cur, self.xyz_cur, self.ft.ft_sensor, self.ft.ft_contact)
         # self.plot2d.update()
 
 

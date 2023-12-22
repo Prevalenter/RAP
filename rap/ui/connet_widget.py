@@ -3,7 +3,7 @@ import time
 
 import numpy as np
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout,\
-    QRadioButton, QGroupBox, QGridLayout, QPlainTextEdit, QSpinBox, QComboBox, QDoubleSpinBox
+    QRadioButton, QGroupBox, QGridLayout, QPlainTextEdit, QSpinBox, QComboBox, QDoubleSpinBox, QCheckBox
 
 import sys
 sys.path.append('..')
@@ -31,7 +31,7 @@ class ConnectWidget(QWidget):
         self.ui_init()
 
     def ui_init(self):
-        self.resize(240, 1080)
+        self.resize(240, 900)
         self.setMaximumWidth(300)
 
         self.setWindowTitle("layout 1")
@@ -84,6 +84,18 @@ class ConnectWidget(QWidget):
         self.btn_radio_ft_sensor.toggled.connect(lambda: self.on_mode_radio_btn(self.btn_radio_ft_sensor))
         preset_box.setLayout(preset_layout)
         preset_box.setMaximumHeight(120)
+
+
+        control_box = QGroupBox("Control set")
+        control_layout = QGridLayout()
+        self.check_adapt_force = QCheckBox('Adapt to force')
+        self.check_adapt_force.stateChanged.connect(self.on_check_adapt_force)
+        self.check_adapt_force.setChecked(True)
+        print(self.up_ctrl.adapt_force_flag)
+
+        control_layout.addWidget(self.check_adapt_force, 0, 0)
+        control_box.setLayout(control_layout)
+
 
         # state_box = QGroupBox("Robot state")
         # layout_state = QGridLayout()
@@ -164,6 +176,7 @@ class ConnectWidget(QWidget):
         container.addWidget(ip_box)
         container.addWidget(preset_box)
         # container.addWidget(angle_set_box)
+        container.addWidget(control_box)
         container.addWidget(xyz_set_box)
         container.addWidget(Rot_set_box)
         # container.addWidget(state_box)
@@ -269,20 +282,23 @@ class ConnectWidget(QWidget):
                 print('check FT Sensor')
 
     def on_align_xyz(self):
-        # for i in range(6):
-        #     self.spinctrl_xyz_list[i].SetValue(self.up_ctrl.xyz_cur[i])
-        # self.data_xyz_init = True
         self.up_ctrl.xyz_tgt = self.up_ctrl.xyz_cur
         self.up_ctrl.update(tgt=True)
 
     def on_back_zero(self):
-
         self.up_ctrl.xyz_tgt = [0.44, 0.04, 0.8, 3.14159, 0, 3.14159]
         self.up_ctrl.angles_tgt = [0, 0, 0, 0, 0, 0]
 
         self.write_tgt()
         self.up_ctrl.update(tgt=True)
 
+
+    def on_check_adapt_force(self):
+        if self.check_adapt_force.checkState()==0:
+            self.up_ctrl.adapt_force_flag = False
+        else:
+            self.up_ctrl.adapt_force_flag = True
+        print('on_check_adapt_force', self.up_ctrl.adapt_force_flag)
 
     def on_apply_angle(self):
         for i in range(6):
@@ -306,11 +322,8 @@ class ConnectWidget(QWidget):
         self.apply_xyz()
 
     def apply_xyz(self):
-
         for i in range(6):
-            # self.up_ctrl.xyz_tgt[i] = (self.spinctrl_xyz_list[i]).GetValue()
             self.up_ctrl.xyz_tgt[i] = self.xyz_spin_list[i].value()
-        # print('after apply xyz: ', self.up_ctrl.xyz_tgt)
 
         self.up_ctrl.axis.set_axis(self.up_ctrl.xyz_tgt[:3], self.up_ctrl.xyz_tgt[3:])
         self.write_tgt()
@@ -321,6 +334,20 @@ class ConnectWidget(QWidget):
         self.apply_Rot(pos_set)
 
     def apply_Rot(self, pos_set):
+        print('before: ', pos_set)
+        # cartesian space safe check
+        for i in range(6):
+            if i<3:
+                pos_set[i] = np.clip(pos_set[i],
+                                     self.up_ctrl.cartesian_work_space[i][0]-pre_action_dict['back zero'][i],
+                                     self.up_ctrl.cartesian_work_space[i][1]-pre_action_dict['back zero'][i])
+            else:
+                pos_set[i] = np.clip(pos_set[i],
+                                     self.up_ctrl.cartesian_work_space[i][0],
+                                     self.up_ctrl.cartesian_work_space[i][1])
+        print('after: ', pos_set)
+
+
         zero = pre_action_dict['back zero'].copy()
         pos_set_new = np.zeros(6)
         print(pos_set, zero)
