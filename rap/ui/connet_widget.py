@@ -221,11 +221,11 @@ class ConnectWidget(QWidget):
 
                     self.up_ctrl.ft.set_data(self.up_ctrl.ft_cur, self.up_ctrl.xyz_cur)
 
-                    self.ft_traj.append(self.up_ctrl.ft.data)
-
-                    if len(self.ft_traj)%50==0:
-                        print('save')
-                        np.save('ft_traj', np.array(self.ft_traj))
+                    # self.ft_traj.append(self.up_ctrl.ft.data)
+                    #
+                    # if len(self.ft_traj)%50==0:
+                    #     print('save')
+                    #     np.save('ft_traj', np.array(self.ft_traj))
 
 
     def update_tgt(self):
@@ -315,22 +315,25 @@ class ConnectWidget(QWidget):
         self.up_ctrl.axis.set_axis(self.up_ctrl.xyz_tgt[:3], self.up_ctrl.xyz_tgt[3:])
         self.write_tgt()
 
-    def on_apply_Rot(self):
-        print('on_apply_Rot')
+    def on_apply_Rot(self, pos_set=False):
 
-        test = [0]*6
-        zero = pre_action_dict['back zero']
+        pos_set = [self.Rot_spin_list[i].value() for i in range(6)]
+        self.apply_Rot(pos_set)
 
+    def apply_Rot(self, pos_set):
+        zero = pre_action_dict['back zero'].copy()
+        pos_set_new = np.zeros(6)
+        print(pos_set, zero)
         for i in range(3):
-            test[i] = ( self.Rot_spin_list[i].value() + zero[i] )
+            pos_set_new[i] = ( pos_set[i] + zero[i] )
 
-        test[3] = self.Rot_spin_list[5].value() + zero[3]
-        test[4] = -self.Rot_spin_list[4].value() + zero[4]
-        test[5] = -self.Rot_spin_list[3].value() + zero[5]
+        pos_set_new[3] = pos_set[5] + zero[3]
+        pos_set_new[4] = -pos_set[4] + zero[4]
+        pos_set_new[5] = -pos_set[3] + zero[5]
 
-        self.up_ctrl.xyz_tgt = test
-        self.up_ctrl.axis.set_axis(test[:3], test[3:])
-        self.up_ctrl.ft.set_data(self.up_ctrl.ft_cur, test)
+        self.up_ctrl.xyz_tgt = pos_set_new
+        self.up_ctrl.axis.set_axis(pos_set_new[:3], pos_set_new[3:])
+        self.up_ctrl.ft.set_data(self.up_ctrl.ft_cur, pos_set_new)
         self.write_tgt()
 
     def write_tgt(self):

@@ -1,7 +1,6 @@
 import sys
 sys.path.append("..")
 
-sys.path.append('..')
 from ui.ui3d.axis import Axis
 from ui.ui3d.forcesensor import ForceSensor
 
@@ -12,8 +11,11 @@ from plot3d import Ui3dWindow
 from plot2d import Plot2dWindow, PlotMainWindow
 from state import StateWidget
 from connet_widget import QApplication, ConnectWidget
+from ui.calibrate_widget import CalibrateWidget
+# from control_widget import ControlWidget
+
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QApplication, QTabWidget
 
 class MainWindow(QWidget):
     def __init__(self, ui_type='3d'):
@@ -29,8 +31,18 @@ class MainWindow(QWidget):
         self.axis_ori = Axis()
         self.ft = ForceSensor()
 
-        self.connect_widget = ConnectWidget(up_ctrl=self)
-        self.connect_widget.setParent(self)
+
+        self.control_tab = QTabWidget()
+        self.connect_widget = ConnectWidget(self)
+        self.calibrate_widget = CalibrateWidget(self)
+        self.control_tab.addTab(self.connect_widget, "Connect")
+        self.control_tab.addTab(self.calibrate_widget, "calibrate")
+        # self.control_widget = ControlWidget(up_ctrl=self)
+        # self.control_widget.setParent(self)
+
+        # self.connect_widget = self.control_widget.connect
+
+
 
         self.state_widget = StateWidget(up_ctrl=self)
 
@@ -47,7 +59,7 @@ class MainWindow(QWidget):
         layout_mid.addWidget(self.plot)
         layout_mid.addWidget(self.state_widget)
 
-        layout.addWidget(self.connect_widget)
+        layout.addWidget(self.control_tab)
         layout.addLayout(layout_mid)
 
         self.setLayout(layout)
@@ -58,7 +70,7 @@ class MainWindow(QWidget):
         if sent_tgt:
             self.connect_widget.apply_xyz()
         self.plot.update()
-        self.state_widget.update(self.angle_cur, self.xyz_cur, self.ft.data_modefied)
+        self.state_widget.update(self.angle_cur, self.xyz_cur, self.ft.ft_sensor)
         # self.plot2d.update()
 
 

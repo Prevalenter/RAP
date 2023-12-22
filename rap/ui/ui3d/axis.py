@@ -4,7 +4,7 @@ import moderngl
 
 import sys
 sys.path.append("../..")
-from utils.trans import get_transform
+from utils.trans import get_transform, to_world_axis
 
 class Axis:
     def __init__(self, seq='zyx', scale=1):
@@ -19,7 +19,8 @@ class Axis:
 
     def render(self, gl_ctrl):
         # rst =
-        T = self.calucu()
+        # T = self.calucu()
+        T = to_world_axis(self.xyz, self.angles)
         end = T @ self.axis_base
         end = end[:3, :3]
 
@@ -42,20 +43,19 @@ class Axis:
                 gl_ctrl.vao_axis_simple[-1].render(moderngl.LINES)
 
 
-    def calucu(self):
-        angles = self.angles.copy()
-        angles[0] = -angles[0]
-        angles[2] = -angles[2]
-
-        return get_transform(self.xyz, angles)
-
+    # def calucu(self):
+    #     angles = self.angles.copy()
+    #     angles[0] = -angles[0]
+    #     angles[2] = -angles[2]
+    #
+    #     return get_transform(self.xyz, angles)
 
 
     def set_axis(self, xyz=None, angles=None):
         if xyz is not None:
-            self.xyz = xyz
+            self.xyz = np.array(xyz)
         if angles is not None:
-            self.angles = angles
+            self.angles = np.array(angles)
 
     def set_sacle(self, scale):
         self.scale = scale
