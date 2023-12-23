@@ -18,21 +18,23 @@ class Client:
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._addr = (host, port)
 
-        # self.msg_rcv = ""
         self.parent = parent
+
+        self.is_writing = False
 
 
     def read(self):
         """ 向连接中接受数据 """
         while True:
             try:
+                # if self.is_writing: continue
                 data = self._sock.recv(1024).decode()
                 # print(len(data))
                 # logging.info("[R %s]<< %s", currentThread().getName(), data)
                 if self.parent!=None: 
                     self.parent.set_msg_rcv(data)
-
-                time.sleep(0.1)
+                # print('set_msg_rcv down')
+                # time.sleep(0.1)
 
             except Exception as e:
                 logging.info("recv failed: %s", e)
@@ -41,14 +43,21 @@ class Client:
     def write(self, msg):
         """ 向连接中发送随机数 """
         # while True:
+        # if self.is_writing:
+        #     print('is_writing, return ')
+        #     return
 
+        # self.is_writing = True
         logging.info("[W %s]>> %s", currentThread().getName(), msg)
+
         try:
             self._sock.send(msg.encode())
         except Exception as e:
             logging.info("send failed: %s", e)
             return
-        time.sleep(0.01)
+        # time.sleep(2)
+        # print("write down")
+        # self.is_writing = False
 
     def cmd_initial(self):
         cmd_list =  [["00,cl", 0.5],

@@ -14,7 +14,7 @@ class ForceSensor:
         self.pos_cur = np.zeros(6)
         self.ft_contact = np.zeros(6)
 
-        self.ft_contact_world = None
+        self.force_contact_world = None
 
         self.initial_flag = False
         self.initial_value = np.zeros(6)
@@ -33,7 +33,7 @@ class ForceSensor:
             self.ft_sensor = np.zeros(6)
         else:
             self.ft_contact = get_force_conttace_once(self.para, self.ft_sensor, self.pos_cur)
-            if np.linalg.norm(self.ft_contact)<0.12:
+            if np.linalg.norm(self.ft_contact)<0.2:
                 self.ft_contact[:3] = 0
 
     def render(self, gl_ctrl):
@@ -44,7 +44,7 @@ class ForceSensor:
 
         end = T @ np.array(list(self.ft_contact[:3]) + [1])[:, None]
         end = end[:3, 0]
-        self.ft_contact_world = end.copy()
+        self.force_contact_world = end - begin
 
         gl_ctrl.color.value = gl_ctrl.new_color
         gl_ctrl.vbo_ft = gl_ctrl.ctx.buffer(np.array([begin, end], dtype=np.float32))

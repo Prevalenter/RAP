@@ -5,16 +5,17 @@ sys.path.append('..')
 
 from utils.trans import get_transform, to_world_axis, ft_map
 
-def get_ft_para(path='../data/calibrate/ft.npy'):
+def get_ft_para(path='../data/calibrate/ft.npy', static_only=False):
     data = np.load(path)
 
-    # get the static data
-    xyz_cur = data[:, 1, 3:]
-    xyz_cur = xyz_cur[1:] - xyz_cur[:-1]
-    xyz_cur_norm = np.linalg.norm(xyz_cur, axis=1)
+    if static_only:
+        # get the static data
+        xyz_cur = data[:, 1, 3:]
+        xyz_cur = xyz_cur[1:] - xyz_cur[:-1]
+        xyz_cur_norm = np.linalg.norm(xyz_cur, axis=1)
 
-    select_mask = (xyz_cur_norm<0.005) * (xyz_cur_norm>0)
-    data = data[1:][select_mask]
+        select_mask = (xyz_cur_norm<0.005) * (xyz_cur_norm>0)
+        data = data[1:][select_mask]
 
     print('using data shape is: ', data.shape)
     A_list = []

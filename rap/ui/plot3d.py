@@ -345,9 +345,6 @@ class Ui3dWindow(QtWidgets.QMainWindow):
 
     def update(self):
         pass
-        # print("plot 3d update: ", self.up_ctrl.xyz_cur)
-        # self.glWidget.axis.set_axis(xyz=self.up_ctrl.xyz_cur[:3], angles=self.up_ctrl.xyz_cur[3:])
-        # self.glWidget.ft.set_data(self.up_ctrl.ft_cur)
 
     def sim_sent(self):
         print('sim sent')

@@ -11,6 +11,7 @@ from connect.client import Client
 
 pre_action_dict = {
     'back zero': [0.4, 0.0, 0.8, 3.14159, 0, 3.14159],
+    # 'test': [0.4000158067460178, 0.0, 0.8000742610857445, 3.14159, 0.0, 3.14159],
     # 'to hole': [0.6363, 0.15408, 0.18055, 3.14159, 0, 3.14159],
     'to hole': [0.6363, 0.15408, 0.190, 3.14159, 0, 3.14159]
 }
@@ -254,6 +255,11 @@ class ConnectWidget(QWidget):
         self.Rot_spin_list[4].setValue(-(self.up_ctrl.xyz_tgt[4] - zero[4]))
         self.Rot_spin_list[5].setValue((self.up_ctrl.xyz_tgt[3] - zero[3]))
 
+        print('connet widget update tgt down')
+
+    def get_tgt_xyz_rot(self):
+        return np.array([self.Rot_spin_list[i].value() for i in range(6)])
+
     def print_ft_cur(self):
         # pass
         print('print ft cur:', self.up_ctrl.ft_cur)
@@ -309,16 +315,16 @@ class ConnectWidget(QWidget):
         # print()
 
     def on_apply_preset(self):
-        print('on preset')
-        print(self.action_combo.currentText())
+        # print('on preset')
+        # print(self.action_combo.currentText())
 
         self.up_ctrl.xyz_tgt = pre_action_dict[self.action_combo.currentText()].copy()
-        print('on preset set xyz tgt: ', self.up_ctrl.xyz_tgt)
+        # print('on preset set xyz tgt: ', self.up_ctrl.xyz_tgt)
         # self.draw()
         self.up_ctrl.update(tgt=True, sent_tgt=True)
 
     def on_apply_xyz(self):
-        print("on_apply_xyz")
+        # print("on_apply_xyz")
         self.apply_xyz()
 
     def apply_xyz(self):
@@ -347,10 +353,9 @@ class ConnectWidget(QWidget):
                                      self.up_ctrl.cartesian_work_space[i][1])
         print('after: ', pos_set)
 
-
         zero = pre_action_dict['back zero'].copy()
         pos_set_new = np.zeros(6)
-        print(pos_set, zero)
+        # print(pos_set, zero)
         for i in range(3):
             pos_set_new[i] = ( pos_set[i] + zero[i] )
 
@@ -373,11 +378,10 @@ class ConnectWidget(QWidget):
         str_tmp += '}'
 
         if self.client is not None:
+            # pass
             self.client.write(str_tmp)
         else:
             self.up_ctrl.xyz_cur = self.up_ctrl.xyz_tgt
-            # self.up_ctrl.
-            # self.print_xyz_cur()
 
         self.up_ctrl.update(tgt=True)
 

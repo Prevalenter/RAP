@@ -14,6 +14,8 @@ from connet_widget import QApplication, ConnectWidget
 from ui.calibrate_widget import CalibrateWidget
 # from control_widget import ControlWidget
 
+from utils.adapt_force import ForceAdapter
+
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QApplication, QTabWidget
 
@@ -30,6 +32,8 @@ class MainWindow(QWidget):
         # self.axis.set_axis(angles=[0.3, 0, 0])
         self.axis_ori = Axis()
         self.ft = ForceSensor()
+
+
 
         self.adapt_force_flag = False
 
@@ -54,12 +58,15 @@ class MainWindow(QWidget):
 
         self.state_widget = StateWidget(up_ctrl=self)
 
+
         if ui_type=='3d':
             self.plot = Ui3dWindow(up_ctrl=self)
             self.plot.setParent(self)
             self.plot.setMinimumHeight(800)
         else:
             self.plot = Plot2dWindow(up_ctrl=self)
+
+        self.fa = ForceAdapter(self)
 
         layout = QHBoxLayout()
 
@@ -74,11 +81,14 @@ class MainWindow(QWidget):
 
     def update(self, tgt=False, cur=False, sent_tgt=False):
         if tgt:
+            print('update tgt!')
             self.connect_widget.update_tgt()
         if sent_tgt:
             self.connect_widget.apply_xyz()
         self.plot.update()
         self.state_widget.update(self.angle_cur, self.xyz_cur, self.ft.ft_sensor, self.ft.ft_contact)
+
+        # print('UI update down')
         # self.plot2d.update()
 
 

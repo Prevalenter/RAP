@@ -1,8 +1,10 @@
+import time
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 from PyQt5.QtCore import QTimer
-from threading import Timer
+from threading import Timer, Thread
 
 class ForceAdapter:
     def __init__(self, up_ctrl=None, dt=0.1, mass=[3, 3, 3, 4e-3, 4e-3, 4e-3], damp = [0.8, 0.8, 0.8, 0, 0 ,0]):
@@ -17,7 +19,11 @@ class ForceAdapter:
         # self.timer.timeout.connect(self.timer_step)
         # self.timer.start(100)
 
-        self.timer_step()
+        # self.timer_step()
+        self.timer = Thread(target=self.timer_step)
+        self.timer.start()
+
+
 
     def set_dt(self, dt):
         self.dt = dt
@@ -29,17 +35,44 @@ class ForceAdapter:
         self.damp = damp
 
     def timer_step(self):
-        if self.up_ctrl is not None:
-            self.up_ctrl.ft.
+        while True:
+            if self.up_ctrl is not None and self.up_ctrl.connect_widget.client is not None:
+                force_contact_world = self.up_ctrl.ft.force_contact_world.copy()[:3]
+                force_contact_norm = np.linalg.norm(force_contact_world)
+                if force_contact_norm!=0:
+                    print('-'*50)
+                    print('in change xyz rot')
+                    xyz_rot_cur = self.up_ctrl.connect_widget.get_tgt_xyz_rot()
 
+                    dx = self.step(force_contact_world)
 
-        print('timer_step')
-        timer = Timer(0.1, self.timer_step)
-        timer.start()
+                    print(xyz_rot_cur, force_contact_world, dx)
+
+                    dx = np.array([0, 0, 0.01, 0, 0, 0])
+                    xyz_rot_new = xyz_rot_cur.copy()
+                    print(xyz_rot_cur.shape, dx.shape)
+                    xyz_rot_new += dx
+
+                    self.up_ctrl.connect_widget.apply_Rot(xyz_rot_new)
+                    # self.up_ctrl.connect_widget.apply_Rot([0, 0, 0, 0, 0, 0])
+                    # is_restart = False
+
+                    print('out change xyz rot')
+
+            time.sleep(0.1)
+
+        # if is_restart:
+        #     timer = Timer(0.1, self.timer_step)
+        #     timer.start()
+        #     print('timer restart')
 
     def step(self, force):
-        a = force/self.mass
-        self.v = a*(self.dt**2) + self.damp*self.v
+        # apply the force-translate
+        a = force/self.mass[:3]
+        self.v[:3] = a*(self.dt**2) + self.damp[:3]*self.v[:3]
+
+        # apply the torque-rotation
+
         return self.v*self.dt
 
 
