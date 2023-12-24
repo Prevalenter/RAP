@@ -19,6 +19,9 @@ from utils.adapt_force import ForceAdapter
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QApplication, QTabWidget
 
+
+
+
 class MainWindow(QWidget):
     def __init__(self, ui_type='3d'):
         super().__init__()
@@ -27,6 +30,13 @@ class MainWindow(QWidget):
         self.xyz_cur = [0]*6
         self.angle_cur = [0]*6
         self.ft_cur = [0]*6
+
+        self.pre_action_dict = {
+            'back zero': [0.4, 0.0, 0.8, 3.14159, 0, 3.14159],
+            # 'test': [0.4000158067460178, 0.0, 0.8000742610857445, 3.14159, 0.0, 3.14159],
+            # 'to hole': [0.6363, 0.15408, 0.18055, 3.14159, 0, 3.14159],
+            'to hole': [0.6363, 0.15408, 0.190, 3.14159, 0, 3.14159]
+        }
 
         self.axis = Axis(scale=0.1)
         # self.axis.set_axis(angles=[0.3, 0, 0])

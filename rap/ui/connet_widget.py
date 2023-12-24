@@ -9,12 +9,7 @@ import sys
 sys.path.append('..')
 from connect.client import Client
 
-pre_action_dict = {
-    'back zero': [0.4, 0.0, 0.8, 3.14159, 0, 3.14159],
-    # 'test': [0.4000158067460178, 0.0, 0.8000742610857445, 3.14159, 0.0, 3.14159],
-    # 'to hole': [0.6363, 0.15408, 0.18055, 3.14159, 0, 3.14159],
-    'to hole': [0.6363, 0.15408, 0.190, 3.14159, 0, 3.14159]
-}
+
 
 class ConnectWidget(QWidget):
     def __init__(self, up_ctrl=None):
@@ -71,7 +66,7 @@ class ConnectWidget(QWidget):
         # btn3 = QRadioButton('curl hair')
 
         self.action_combo = QComboBox()
-        self.action_combo.addItems(list(pre_action_dict))
+        self.action_combo.addItems(list(self.up_ctrl.pre_action_dict))
         self.btn_preaction = QPushButton('Apply')
         self.btn_preaction.clicked.connect(self.on_apply_preset)
 
@@ -244,13 +239,14 @@ class ConnectWidget(QWidget):
 
     def update_tgt(self):
 
-        zero = pre_action_dict['back zero'].copy()
+        zero = self.up_ctrl.pre_action_dict['back zero'].copy()
 
         for i in range(6):
             self.xyz_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i])
 
         for i in range(3):
-            self.Rot_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i]-zero[i])
+            # self.Rot_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i]-zero[i])
+            self.Rot_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i])
         self.Rot_spin_list[3].setValue(-(self.up_ctrl.xyz_tgt[5] - zero[5]))
         self.Rot_spin_list[4].setValue(-(self.up_ctrl.xyz_tgt[4] - zero[4]))
         self.Rot_spin_list[5].setValue((self.up_ctrl.xyz_tgt[3] - zero[3]))
@@ -258,7 +254,32 @@ class ConnectWidget(QWidget):
         print('connet widget update tgt down')
 
     def get_tgt_xyz_rot(self):
-        return np.array([self.Rot_spin_list[i].value() for i in range(6)])
+        # for i in range(3):
+        #     pos_set_new[i] = pos_set[i]
+        #
+        # pos_set_new[3] = pos_set[5] + zero[3]
+        # pos_set_new[4] = -pos_set[4] + zero[4]
+        # pos_set_new[5] = -pos_set[3] + zero[5]
+        #
+        # self.up_ctrl.xyz_tgt = pos_set_new
+        zero = self.up_ctrl.pre_action_dict['back zero']
+        pos_set_new = np.zeros(6)
+        pos_set = self.up_ctrl.xyz_tgt.copy()
+        for i in range(3):
+            pos_set_new[i] = pos_set[i]
+
+        # self.Rot_spin_list[3].setValue(-(self.up_ctrl.xyz_tgt[5] - zero[5]))
+        # self.Rot_spin_list[4].setValue(-(self.up_ctrl.xyz_tgt[4] - zero[4]))
+        # self.Rot_spin_list[5].setValue((self.up_ctrl.xyz_tgt[3] - zero[3]))
+        pos_set_new[3] = -pos_set[5] + zero[5]
+        pos_set_new[4] = -pos_set[4] + zero[4]
+        pos_set_new[5] = pos_set[3] - zero[3]
+
+
+        return pos_set_new
+
+
+        # return np.array([self.Rot_spin_list[i].value() for i in range(6)])
 
     def print_ft_cur(self):
         # pass
@@ -318,7 +339,7 @@ class ConnectWidget(QWidget):
         # print('on preset')
         # print(self.action_combo.currentText())
 
-        self.up_ctrl.xyz_tgt = pre_action_dict[self.action_combo.currentText()].copy()
+        self.up_ctrl.xyz_tgt = self.up_ctrl.pre_action_dict[self.action_combo.currentText()].copy()
         # print('on preset set xyz tgt: ', self.up_ctrl.xyz_tgt)
         # self.draw()
         self.up_ctrl.update(tgt=True, sent_tgt=True)
@@ -344,20 +365,25 @@ class ConnectWidget(QWidget):
         # cartesian space safe check
         for i in range(6):
             if i<3:
+                # pos_set[i] = np.clip(pos_set[i],
+                #                      self.up_ctrl.cartesian_work_space[i][0]-self.up_ctrl.pre_action_dict['back zero'][i],
+                #                      self.up_ctrl.cartesian_work_space[i][1]-self.up_ctrl.pre_action_dict['back zero'][i])
                 pos_set[i] = np.clip(pos_set[i],
-                                     self.up_ctrl.cartesian_work_space[i][0]-pre_action_dict['back zero'][i],
-                                     self.up_ctrl.cartesian_work_space[i][1]-pre_action_dict['back zero'][i])
+                                     self.up_ctrl.cartesian_work_space[i][0],
+                                     self.up_ctrl.cartesian_work_space[i][1])
             else:
                 pos_set[i] = np.clip(pos_set[i],
                                      self.up_ctrl.cartesian_work_space[i][0],
                                      self.up_ctrl.cartesian_work_space[i][1])
         print('after: ', pos_set)
 
-        zero = pre_action_dict['back zero'].copy()
+        zero = self.up_ctrl.pre_action_dict['back zero'].copy()
         pos_set_new = np.zeros(6)
         # print(pos_set, zero)
+
         for i in range(3):
-            pos_set_new[i] = ( pos_set[i] + zero[i] )
+            # pos_set_new[i] = ( pos_set[i] + zero[i] )
+            pos_set_new[i] = pos_set[i]
 
         pos_set_new[3] = pos_set[5] + zero[3]
         pos_set_new[4] = -pos_set[4] + zero[4]

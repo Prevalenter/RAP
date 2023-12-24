@@ -9,11 +9,11 @@ import sys
 sys.path.append('..')
 from connect.client import Client
 
-pre_action_dict = {
-    'back zero': [0.4, 0.0, 0.8, 3.14159, 0, 3.14159],
-    # 'to hole': [0.6363, 0.15408, 0.18055, 3.14159, 0, 3.14159],
-    'to hole': [0.6363, 0.15408, 0.190, 3.14159, 0, 3.14159]
-}
+# pre_action_dict = {
+#     'back zero': [0.4, 0.0, 0.8, 3.14159, 0, 3.14159],
+#     # 'to hole': [0.6363, 0.15408, 0.18055, 3.14159, 0, 3.14159],
+#     'to hole': [0.6363, 0.15408, 0.190, 3.14159, 0, 3.14159]
+# }
 
 class StateWidget(QWidget):
     def __init__(self, up_ctrl=None):

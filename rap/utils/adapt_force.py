@@ -36,8 +36,10 @@ class ForceAdapter:
 
     def timer_step(self):
         while True:
-            if self.up_ctrl is not None and self.up_ctrl.connect_widget.client is not None:
-                force_contact_world = self.up_ctrl.ft.force_contact_world.copy()[:3]
+            # if self.up_ctrl is not None and self.up_ctrl.connect_widget.client is not None:
+            if self.up_ctrl is not None:
+                # force_contact_world = self.up_ctrl.ft.force_contact_world.copy()[:3]
+                force_contact_world = np.array([0, 0, 0.5])
                 force_contact_norm = np.linalg.norm(force_contact_world)
                 if force_contact_norm!=0:
                     print('-'*50)
@@ -48,8 +50,9 @@ class ForceAdapter:
 
                     print(xyz_rot_cur, force_contact_world, dx)
 
-                    dx = np.array([0, 0, 0.01, 0, 0, 0])
+                    # dx = np.array([0, 0, 0.01, 0, 0, 0])
                     xyz_rot_new = xyz_rot_cur.copy()
+                    # xyz_rot_new =
                     print(xyz_rot_cur.shape, dx.shape)
                     xyz_rot_new += dx
 
