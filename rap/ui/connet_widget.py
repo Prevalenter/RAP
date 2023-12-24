@@ -240,16 +240,20 @@ class ConnectWidget(QWidget):
     def update_tgt(self):
 
         zero = self.up_ctrl.pre_action_dict['back zero'].copy()
-
+        print('in update tgt: ', self.up_ctrl.xyz_tgt)
         for i in range(6):
             self.xyz_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i])
 
         for i in range(3):
             # self.Rot_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i]-zero[i])
             self.Rot_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i])
+
         self.Rot_spin_list[3].setValue(-(self.up_ctrl.xyz_tgt[5] - zero[5]))
         self.Rot_spin_list[4].setValue(-(self.up_ctrl.xyz_tgt[4] - zero[4]))
         self.Rot_spin_list[5].setValue((self.up_ctrl.xyz_tgt[3] - zero[3]))
+
+
+        # self.update()
 
         print('connet widget update tgt down')
 
@@ -264,7 +268,7 @@ class ConnectWidget(QWidget):
         # self.up_ctrl.xyz_tgt = pos_set_new
         zero = self.up_ctrl.pre_action_dict['back zero']
         pos_set_new = np.zeros(6)
-        pos_set = self.up_ctrl.xyz_tgt.copy()
+        pos_set = self.up_ctrl.xyz_tgt
         for i in range(3):
             pos_set_new[i] = pos_set[i]
 
@@ -357,7 +361,7 @@ class ConnectWidget(QWidget):
 
     def on_apply_Rot(self, pos_set=False):
 
-        pos_set = [self.Rot_spin_list[i].value() for i in range(6)]
+        pos_set = np.array([self.Rot_spin_list[i].value() for i in range(6)])
         self.apply_Rot(pos_set)
 
     def apply_Rot(self, pos_set):
