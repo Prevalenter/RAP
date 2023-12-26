@@ -6,7 +6,7 @@ import sys
 sys.path.append("../..")
 from utils.trans import get_transform, to_world_axis, ft_map
 
-from utils.ft_ident import get_ft_para, get_force_conttace_once
+from utils.ft_ident import get_ft_para, get_force_contact_once, get_torque_contact_once
 
 class ForceSensor:
     def __init__(self, scale=1):
@@ -22,7 +22,7 @@ class ForceSensor:
 
         self.scale = scale
         self.axis_base = np.array([0, 0, 0, 1])[:, None]
-        self.para = get_ft_para()
+        self.para_force, self.para_torque = get_ft_para()
 
 
     def set_data(self, data, pos):
@@ -32,9 +32,13 @@ class ForceSensor:
         if np.linalg.norm(self.ft_sensor)==0:
             self.ft_sensor = np.zeros(6)
         else:
-            self.ft_contact = get_force_conttace_once(self.para, self.ft_sensor, self.pos_cur)
-            if np.linalg.norm(self.ft_contact)<0.2:
+            self.ft_contact[:3] = get_force_contact_once(self.para_force, self.ft_sensor, self.pos_cur)[0]
+            self.ft_contact[3:] = get_torque_contact_once(self.para_torque, self.ft_sensor)[0]
+            if np.linalg.norm(self.ft_contact[:3])<0.2:
                 self.ft_contact[:3] = 0
+
+            if np.linalg.norm(self.ft_contact[3:])<0.005:
+                self.ft_contact[3:] = 0
 
     def render(self, gl_ctrl):
         # T = self.calucu()

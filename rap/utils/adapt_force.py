@@ -52,7 +52,9 @@ class ForceAdapter:
 
                 dx = np.array([0, 0, 0, 0, 0, 0]).astype(np.float32)
                 # dx[:3] = np.clip(force_contact_world[:3]*0.01, -0.05, 0.05)
-                dx[:3] = force_contact_world*0.005
+
+
+                dx[:3] = force_contact_world*0.008
 
                 xyz_rot_new = xyz_rot_cur.copy()
                 print(xyz_rot_cur.shape, dx)

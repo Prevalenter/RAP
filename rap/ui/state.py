@@ -64,7 +64,7 @@ class StateWidget(QWidget):
                 self.state_le_list['ft'][i].setText("%.4f" % (ft[i]))
 
         if ft_world is not None:
-            for i in range(3):
+            for i in range(6):
                 self.state_le_list['ft_world'][i].setText("%.4f" % (ft_world[i]))
 
 class MyWindow(QWidget):
