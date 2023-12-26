@@ -40,22 +40,22 @@ class ForceAdapter:
         # while True:
             # if self.up_ctrl is not None and self.up_ctrl.connect_widget.client is not None:
         if self.up_ctrl is not None:
-            # force_contact_world = self.up_ctrl.ft.force_contact_world.copy()[:3]
-            force_contact_world = np.array([0.5, 0, 0])
+            force_contact_world = self.up_ctrl.ft.force_contact_world.copy()[:3]
+            # force_contact_world = np.array([0, 0, 0.5])
             force_contact_norm = np.linalg.norm(force_contact_world)
             if force_contact_norm!=0:
                 print('-'*50)
                 print('in change xyz rot')
                 xyz_rot_cur = self.up_ctrl.connect_widget.get_tgt_xyz_rot()
 
-                dx = self.step(force_contact_world)
+                print(xyz_rot_cur, force_contact_world)
 
-                print(xyz_rot_cur, force_contact_world, dx)
+                dx = np.array([0, 0, 0, 0, 0, 0]).astype(np.float32)
+                # dx[:3] = np.clip(force_contact_world[:3]*0.01, -0.05, 0.05)
+                dx[:3] = force_contact_world*0.005
 
-                # dx = np.array([0, 0.01, 0.01, 0, 0, 0])
                 xyz_rot_new = xyz_rot_cur.copy()
-                # xyz_rot_new =
-                print(xyz_rot_cur.shape, dx.shape)
+                print(xyz_rot_cur.shape, dx)
                 xyz_rot_new += dx
 
                 self.up_ctrl.connect_widget.apply_Rot(xyz_rot_new)
@@ -64,12 +64,6 @@ class ForceAdapter:
 
                 print('out change xyz rot')
 
-            # time.sleep(0.1)
-
-        # if is_restart:
-        #     timer = Timer(0.1, self.timer_step)
-        #     timer.start()
-        #     print('timer restart')
 
     def step(self, force):
         # apply the force-translate
