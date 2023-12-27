@@ -19,14 +19,6 @@ class ForceAdapter:
         self.timer.timeout.connect(self.timer_step)
         self.timer.start(100)
 
-        # self.timer_step()
-
-        # self.timer = Thread(target=self.timer_step)
-        # self.timer.start()
-
-    # def bind_timer(self):
-    #     self
-
     def set_dt(self, dt):
         self.dt = dt
 
@@ -39,10 +31,9 @@ class ForceAdapter:
     def timer_step(self):
         # while True:
             # if self.up_ctrl is not None and self.up_ctrl.connect_widget.client is not None:
-        if self.up_ctrl is not None:
-            force_contact_world = self.up_ctrl.ft.force_contact_world.copy()[:3]
-            # force_contact_world = np.array([0, 0, 0.5])
-            force_contact_norm = np.linalg.norm(force_contact_world)
+        if self.up_ctrl is not None and self.up_ctrl.adapt_force_flag:
+            force_contact_world = self.up_ctrl.ft.force_contact_world.copy()
+            force_contact_norm = np.linalg.norm(force_contact_world[:3])
             if force_contact_norm!=0:
                 print('-'*50)
                 print('in change xyz rot')
@@ -51,10 +42,16 @@ class ForceAdapter:
                 print(xyz_rot_cur, force_contact_world)
 
                 dx = np.array([0, 0, 0, 0, 0, 0]).astype(np.float32)
-                # dx[:3] = np.clip(force_contact_world[:3]*0.01, -0.05, 0.05)
 
 
-                dx[:3] = force_contact_world*0.008
+                dx[:3] = np.clip(force_contact_world[:3], -10, 10)*0.01
+
+                torque_map = np.zeros(3)
+                torque_map[0] = force_contact_world[4]
+                torque_map[1] = force_contact_world[3]
+                torque_map[2] = -force_contact_world[5]
+
+                dx[3:] = torque_map
 
                 xyz_rot_new = xyz_rot_cur.copy()
                 print(xyz_rot_cur.shape, dx)

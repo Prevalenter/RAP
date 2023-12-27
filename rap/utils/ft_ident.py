@@ -88,7 +88,8 @@ def get_force_contact_list(para, ft_cur_list, xyz_cur_list):
     return force_contact_list, force_estimate_list
 
 def get_torque_contact_once(para, ft_cur):
-    F_x, F_y, F_z, T_x, T_y, T_z = ft_cur
+
+    F_x, F_y, F_z, T_x, T_y, T_z = (ft_cur)
     # print(F_x, F_y, F_z, T_x, T_y, T_z )
     A_i = np.zeros((3, 6))
     A_i[:3, :3] = np.array([
@@ -127,40 +128,6 @@ if __name__ == '__main__':
     for i in range(ft_cur.shape[0]):
         ft_cur_map.append(ft_map(ft_cur[i]))
     ft_cur_map = np.array(ft_cur_map)
-
-    #
-    # A_list = []
-    # Y_list = []
-    # for i in range(ft_cur.shape[0]):
-    #     F_x, F_y, F_z, T_x, T_y, T_z = ft_cur[i]
-    #
-    #     A_i = np.zeros((3, 6))
-    #     A_i[:3, :3] = np.array([
-    #         [0, F_z, -F_y],
-    #         [-F_z, 0, F_x],
-    #         [F_y, -F_x, 0]
-    #     ])
-    #     A_i[:3, 3:] = np.eye(3)
-    #
-    #     Y_i = np.array([T_x, T_y, T_z]).T
-    #
-    #     A_list.append(A_i)
-    #     Y_list.append(Y_i)
-    #
-    # A_list = np.concatenate(A_list)
-    # Y_list = np.concatenate(Y_list)
-    #
-    # print(A_list.shape, Y_list.shape)
-    #
-    # rst_torque = np.linalg.pinv(A_list) @ Y_list
-    # Y_pred = (A_list @ rst_torque).reshape(-1, 3)
-    #
-    # for i in range(6):
-    #     plt.subplot(6, 1, 1+i)
-    #     plt.plot(ft_cur[:, i])
-    #     if i>2:
-    #         plt.plot(Y_pred[:, i-3], c='g')
-    # plt.show()
 
     para_force, para_torque = get_ft_para()
 

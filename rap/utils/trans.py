@@ -26,6 +26,11 @@ def ft_map(data):
 
     data_new[0] = -data[1]
     data_new[1] = data[0]
+
+    data_new[3] = data[4]
+    data_new[4] = data[3]
+    data_new[5] = -data[5]
+
     return data_new
 
 if __name__ == '__main__':

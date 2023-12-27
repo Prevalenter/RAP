@@ -405,7 +405,7 @@ class ConnectWidget(QWidget):
         for i in range(6):
             str_tmp += str(self.up_ctrl.xyz_tgt[i])
             if i<5: str_tmp += ','
-        str_tmp += '}'
+        str_tmp += '};'
 
         if self.client is not None:
             # pass
