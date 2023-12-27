@@ -84,12 +84,24 @@ class ConnectWidget(QWidget):
 
         control_box = QGroupBox("Control set")
         control_layout = QGridLayout()
-        self.check_adapt_force = QCheckBox('Adapt to force')
-        self.check_adapt_force.stateChanged.connect(self.on_check_adapt_force)
-        self.check_adapt_force.setChecked(True)
-        print(self.up_ctrl.adapt_force_flag)
+        # self.check_drag_force = QCheckBox('Drag')
+        # self.check_compliance_force = QCheckBox('Compliance')
 
-        control_layout.addWidget(self.check_adapt_force, 0, 0)
+        # Drag Compliance
+        self.btn_radio_drag_force = QRadioButton('Drag')
+        self.btn_radio_compliance_force = QRadioButton('Compliance')
+        self.btn_radio_none = QRadioButton('None')
+
+
+        self.btn_radio_drag_force.toggled.connect(lambda: self.on_force_radio_btn(self.btn_radio_drag_force))
+        self.btn_radio_compliance_force.toggled.connect(lambda: self.on_force_radio_btn(self.btn_radio_compliance_force))
+        self.btn_radio_none.toggled.connect(lambda: self.on_force_radio_btn(self.btn_radio_none))
+
+        self.btn_radio_none.setChecked(True)
+
+        control_layout.addWidget(self.btn_radio_drag_force, 0, 0)
+        control_layout.addWidget(self.btn_radio_compliance_force, 0, 1)
+        control_layout.addWidget(self.btn_radio_none, 0, 2)
         control_box.setLayout(control_layout)
 
 
@@ -289,15 +301,6 @@ class ConnectWidget(QWidget):
         # pass
         print('print ft cur:', self.up_ctrl.ft_cur)
 
-    # def print_angles_cur(self):
-    #     for i in range(6):
-    #         self.angle_le_list[i].setText("%.4f"%(self.up_ctrl.angle_cur[i]))
-    #
-    #
-    # def print_xyz_cur(self):
-    #     for i in range(6):
-    #         self.xyz_le_list[i].setText("%.4f"%(self.up_ctrl.xyz_cur[i]))
-
     def on_mode_radio_btn(self, b):
         # print('on_mode_radio_btn', b.text())
         self.client.write("02,0")
@@ -323,13 +326,31 @@ class ConnectWidget(QWidget):
         self.write_tgt()
         self.up_ctrl.update(tgt=True)
 
+    # Drag Compliance
+    def on_force_radio_btn(self, b):
+        b_text = b.text()
+        # if =='Drag':
+        #     self.up_ctrl.drag_force_flag = True
+        # elif b.text()=='Compliance':
+        #     self.up_ctrl.drag_force_flag = False
+        for k in (self.up_ctrl.force_flag_dict):
+            # print(k)
+            if k==b_text and b.isChecked():
+                self.up_ctrl.force_flag_dict[k] = True
+            else:
+                self.up_ctrl.force_flag_dict[k] = False
 
-    def on_check_adapt_force(self):
-        if self.check_adapt_force.checkState()==0:
-            self.up_ctrl.adapt_force_flag = False
-        else:
-            self.up_ctrl.adapt_force_flag = True
-        print('on_check_adapt_force', self.up_ctrl.adapt_force_flag)
+        if b_text=='Compliance' and b.isChecked():
+            self.up_ctrl.compliance_fa.x_r = self.up_ctrl.connect_widget.get_tgt_xyz_rot().copy()
+
+        print('force_flag_dict', self.up_ctrl.force_flag_dict)
+
+    # def on_check_drag_force(self):
+    #     if self.check_drag_force.checkState()==0:
+    #         self.up_ctrl.adapt_force_flag = False
+    #     else:
+    #         self.up_ctrl.adapt_force_flag = True
+    #     print('on_check_adapt_force', self.up_ctrl.adapt_force_flag)
 
     def on_apply_angle(self):
         for i in range(6):

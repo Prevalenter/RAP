@@ -4,7 +4,6 @@ sys.path.append("..")
 from ui.ui3d.axis import Axis
 from ui.ui3d.forcesensor import ForceSensor
 
-
 import matplotlib
 matplotlib.use('Qt5Agg')
 from plot3d import Ui3dWindow
@@ -14,7 +13,7 @@ from connet_widget import QApplication, ConnectWidget
 from ui.calibrate_widget import CalibrateWidget
 # from control_widget import ControlWidget
 
-from utils.adapt_force import ForceAdapter
+from utils import force_adapter
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QApplication, QTabWidget
@@ -33,7 +32,7 @@ class MainWindow(QWidget):
 
         self.pre_action_dict = {
             'back zero': [0.4, 0.0, 0.8, 3.14159, 0, 3.14159],
-            'test 1': [0.4, 0.0, 0.2, 3.14159+0.3, 0.3, 3.14159-0.3],
+            'compliance zero': [0.4, 0.2, 0.6, 3.14159, 0.0, 3.14159],
             # 'test': [0.4000158067460178, 0.0, 0.8000742610857445, 3.14159, 0.0, 3.14159],
             # 'to hole': [0.6363, 0.15408, 0.18055, 3.14159, 0, 3.14159],
             'to hole': [0.6363, 0.15408, 0.190, 3.14159, 0, 3.14159]
@@ -44,9 +43,13 @@ class MainWindow(QWidget):
         self.axis_ori = Axis()
         self.ft = ForceSensor()
 
-
-
-        self.adapt_force_flag = False
+        self.force_flag_dict = {
+            'Drag': False,
+            'Compliance': False,
+            'None': True
+        }
+        # self.compliance = False
+        # self.drag_force_flag = False
 
         self.cartesian_work_space= [[0.25, 0.65], # x
                                     [0.00, 0.50], # y
@@ -77,7 +80,8 @@ class MainWindow(QWidget):
         else:
             self.plot = Plot2dWindow(up_ctrl=self)
 
-        self.fa = ForceAdapter(self)
+        self.drag_fa = force_adapter.DragForceAdapter(self)
+        self.compliance_fa = force_adapter.ComplianceForceAdapter(self)
 
         layout = QHBoxLayout()
 
