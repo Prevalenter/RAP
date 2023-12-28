@@ -12,16 +12,15 @@ from state import StateWidget
 from connet_widget import QApplication, ConnectWidget
 from ui.calibrate_widget import CalibrateWidget
 # from control_widget import ControlWidget
-
+from ui.para_set import ParaSetWidget
 from utils import force_adapter
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QApplication, QTabWidget
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QApplication, QTabWidget, QMainWindow
 
 
-
-
-class MainWindow(QWidget):
+class MainWidget(QWidget):
+# class MainWindow(QWi):
     def __init__(self, ui_type='3d'):
         super().__init__()
         self.xyz_tgt = [0]*6
@@ -29,6 +28,9 @@ class MainWindow(QWidget):
         self.xyz_cur = [0]*6
         self.angle_cur = [0]*6
         self.ft_cur = [0]*6
+
+        self.para_set = ParaSetWidget()
+
 
         self.pre_action_dict = {
             'back zero': [0.4, 0.0, 0.8, 3.14159, 0, 3.14159],
@@ -46,6 +48,7 @@ class MainWindow(QWidget):
         self.force_flag_dict = {
             'Drag': False,
             'Compliance': False,
+            'Position Force': False,
             'None': True
         }
         # self.compliance = False
@@ -82,13 +85,16 @@ class MainWindow(QWidget):
 
         self.drag_fa = force_adapter.DragForceAdapter(self)
         self.compliance_fa = force_adapter.ComplianceForceAdapter(self)
+        self.position_force_fa = force_adapter.PositionForceAdapter(self)
+
+        # self.compliance_fa.start()
 
         layout = QHBoxLayout()
 
         layout_mid = QVBoxLayout()
         layout_mid.addWidget(self.plot)
         layout_mid.addWidget(self.state_widget)
-
+        self.control_tab.setMaximumWidth(300)
         layout.addWidget(self.control_tab)
         layout.addLayout(layout_mid)
 
@@ -110,7 +116,7 @@ class MainWindow(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    w = MainWindow()
+    w = MainWidget()
     # w = ConnectWidget()
     w.show()
     app.exec_()

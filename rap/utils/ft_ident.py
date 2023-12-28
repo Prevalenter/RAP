@@ -141,9 +141,9 @@ if __name__ == '__main__':
     plt.figure(figsize=(10, 4))
     for i in range(3):
         plt.subplot(3, 2, 1+2*i)
-        plt.plot(ft_cur_map[:, i], c='b', label='Prediction')
-        plt.plot(force_estimate[:, i], c='g', label='Measurement')
-
+        plt.plot(ft_cur_map[:, i], c='b', label='Measurement')
+        plt.plot(force_estimate[:, i], c='g', label='Prediction')
+        plt.legend()
         if i==0:
             plt.title('Force')
 

@@ -90,18 +90,20 @@ class ConnectWidget(QWidget):
         # Drag Compliance
         self.btn_radio_drag_force = QRadioButton('Drag')
         self.btn_radio_compliance_force = QRadioButton('Compliance')
+        self.btn_radio_position_force = QRadioButton('Position Force')
         self.btn_radio_none = QRadioButton('None')
 
 
         self.btn_radio_drag_force.toggled.connect(lambda: self.on_force_radio_btn(self.btn_radio_drag_force))
         self.btn_radio_compliance_force.toggled.connect(lambda: self.on_force_radio_btn(self.btn_radio_compliance_force))
+        self.btn_radio_position_force.toggled.connect(lambda: self.on_force_radio_btn(self.btn_radio_position_force))
         self.btn_radio_none.toggled.connect(lambda: self.on_force_radio_btn(self.btn_radio_none))
-
         self.btn_radio_none.setChecked(True)
 
         control_layout.addWidget(self.btn_radio_drag_force, 0, 0)
         control_layout.addWidget(self.btn_radio_compliance_force, 0, 1)
-        control_layout.addWidget(self.btn_radio_none, 0, 2)
+        control_layout.addWidget(self.btn_radio_position_force, 1, 0)
+        control_layout.addWidget(self.btn_radio_none, 1, 1)
         control_box.setLayout(control_layout)
 
 
@@ -386,7 +388,7 @@ class ConnectWidget(QWidget):
         self.apply_Rot(pos_set)
 
     def apply_Rot(self, pos_set):
-        print('before: ', pos_set)
+        # print('before: ', pos_set)
         # cartesian space safe check
         for i in range(6):
             if i<3:
@@ -400,7 +402,7 @@ class ConnectWidget(QWidget):
                 pos_set[i] = np.clip(pos_set[i],
                                      self.up_ctrl.cartesian_work_space[i][0],
                                      self.up_ctrl.cartesian_work_space[i][1])
-        print('after: ', pos_set)
+        # print('after: ', pos_set)
 
         zero = self.up_ctrl.pre_action_dict['back zero'].copy()
         pos_set_new = np.zeros(6)

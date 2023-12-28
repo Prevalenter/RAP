@@ -3,7 +3,7 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer, QThread
 from threading import Timer, Thread
 
 class DragForceAdapter:
@@ -12,10 +12,10 @@ class DragForceAdapter:
         self.dt = dt
 
         self.timer = QTimer(self.up_ctrl)
-        self.timer.timeout.connect(self.timer_step)
+        self.timer.timeout.connect(self.run)
         self.timer.start(int(self.dt*1000))
 
-    def timer_step(self):
+    def run(self):
         if self.up_ctrl is not None and self.up_ctrl.force_flag_dict['Drag']:
             force_contact_world = self.up_ctrl.ft.force_contact_world.copy()
             force_contact_norm = np.linalg.norm(force_contact_world[:3])
@@ -44,17 +44,18 @@ class DragForceAdapter:
 
 class ComplianceForceAdapter:
     def __init__(self, up_ctrl=None, dt=0.1):
+
         self.up_ctrl = up_ctrl
         self.dt = dt
 
         self.timer = QTimer(self.up_ctrl)
-        self.timer.timeout.connect(self.timer_step)
+        self.timer.timeout.connect(self.run)
         self.timer.start(int(self.dt*1000))
 
         # M (\ddX_r-\ddX) + B (\dx_r - \dx) + K (x_r - x) = F - F_d
-        self.M = np.array([0, 0, 0, 0, 0, 0])
-        self.B = np.array([0, 0, 0, 0, 0, 0])
-        self.K = np.array([10, 10, 10, 10000, 10000, 10000])
+        # self.M = np.array([0.01, 0.01, 0.01, 0, 0, 0])
+        # self.B = np.array([0, 0, 0, 0, 0, 0])
+        # self.K = np.array([10, 10, 10, 10000, 10000, 10000])
 
         self.ddx_r = np.array([0, 0, 0, 0, 0, 0])
         self.dx_r = np.array([0, 0, 0, 0, 0, 0])
@@ -69,10 +70,12 @@ class ComplianceForceAdapter:
         self.pos_cur_last = np.zeros(6)
         self.pos_cur_last2 = np.zeros(6)
 
-    def timer_step(self):
+    # def timer_step(self):
+    def run(self):
+        # print('ComplianceForceAdapter run')
         if self.up_ctrl is not None and self.up_ctrl.force_flag_dict['Compliance']:
             force_contact_world = self.up_ctrl.ft.force_contact_world.copy()
-            # force_contact_world = np.array([1, 0, 0, 0, 0, 0])
+            # force_contact_world = np.array([10, 0, 0, 0, 0, 0])
             force_contact_norm = np.linalg.norm(force_contact_world[:3])
 
             self.dx = (self.pos_cur-self.pos_cur_last)/self.dt
@@ -80,23 +83,16 @@ class ComplianceForceAdapter:
             self.ddx = (self.dx-dx_last)/self.dt
 
             if force_contact_norm!=0:
-                print(self.x_r)
-                # xyz_rot_cur = self.up_ctrl.connect_widget.get_tgt_xyz_rot()
-                #
+                print('-'*60)
 
-                # dx[:3] = np.clip(force_contact_world[:3], -10, 10)*0.01
-
-                # torque_map = np.zeros(3)
-                # torque_map[0] = force_contact_world[4]
-                # torque_map[1] = force_contact_world[3]
-                # torque_map[2] = -force_contact_world[5]
-
-                # dx[3:] = torque_map
                 F = force_contact_world
 
-                dx = -( F - self.F_d - self.M * (self.ddx_r-self.ddx) - self.B * (self.dx_r - self.dx) )/self.K
+                M = self.up_ctrl.para_set.para['Compliance']['M']
+                B = self.up_ctrl.para_set.para['Compliance']['B']
+                K = self.up_ctrl.para_set.para['Compliance']['K']
+
+                dx = -( F - self.F_d - M * (self.ddx_r-self.ddx) - B * (self.dx_r - self.dx) )/K
                 dx = -dx
-                print(dx)
 
                 xyz_rot_new = self.x_r.copy()
                 xyz_rot_new += dx
@@ -104,6 +100,25 @@ class ComplianceForceAdapter:
                 self.up_ctrl.connect_widget.apply_Rot(xyz_rot_new)
             else:
                 self.up_ctrl.connect_widget.apply_Rot(self.x_r)
+
+
+
+
+class PositionForceAdapter:
+    def __init__(self, up_ctrl=None, dt=0.1):
+
+        self.up_ctrl = up_ctrl
+        self.dt = dt
+
+        self.timer = QTimer(self.up_ctrl)
+        self.timer.timeout.connect(self.run)
+        self.timer.start(int(self.dt*1000))
+
+    # def timer_step(self):
+    def run(self):
+        # print('PositionForceAdapter run')
+        if self.up_ctrl is not None and self.up_ctrl.force_flag_dict['Position Force']:
+            print('PositionForceAdapter')
 
 
 

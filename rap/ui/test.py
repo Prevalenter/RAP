@@ -1,43 +1,66 @@
-import sys
-from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout
+import PyQt5.QtWidgets as qt
 
+def create_action(obj_parent, text, slot = None, checkable = False, icon = None):
+    action = qt.QAction(text, obj_parent)
+    if slot:
+        action.triggered.connect(slot)
+    action.setCheckable(checkable)
+    if icon:
+        action.setIcon(icon)
+    return action
 
-class Demo(QWidget):
-    def __init__(self):
-        super(Demo, self).__init__()
-        self.label = QLabel('0', self)                          # 1
-        self.label.setAlignment(Qt.AlignCenter)
+class FrmMain(qt.QMainWindow):
+    '''
+    demo for pca algorithm
+    '''
 
-        self.step = 0                                           # 2
+    def __init__(self, parent=None):
+        super(FrmMain, self).__init__(parent)
+        # 界面布局
+        self.__initUI__()
 
-        self.timer = QTimer(self)                               # 3
-        self.timer.timeout.connect(self.update_func)
+    # 函数前增加 __的目的是使得函数为私有，后面也加__ 完全是为了对称起来好看
+    def __initUI__(self):
+        self.setWindowTitle('pca algorithm')
+        self.mdi_area = qt.QMdiArea(self)
+        self.setCentralWidget(self.mdi_area)
 
-        self.ss_button = QPushButton('Start', self)             # 4
-        self.ss_button.clicked.connect(self.start_stop_func)
+        # menuFile
+        self.menu_file = qt.QMenu('File')
+        self.menu_file.addAction(create_action(self, 'pca', slot=self.__slt_pca__))
+        self.menu_file.addSeparator()
+        self.menu_file.addAction(create_action(self, 'close', slot=self.close))
 
-        self.v_layout = QVBoxLayout()
-        self.v_layout.addWidget(self.label)
-        self.v_layout.addWidget(self.ss_button)
+        # menuView
+        self.menu_view = qt.QMenu('View')
+        self.menu_view.addAction(create_action(self, 'tile', slot=self.mdi_area.tileSubWindows))
+        self.menu_view.addAction(create_action(self, 'cascade', slot=self.mdi_area.cascadeSubWindows))
+        self.menu_view.addSeparator()
+        self.menu_view.addAction(create_action(self, 'previous', slot=self.mdi_area.activatePreviousSubWindow))
+        self.menu_view.addAction(create_action(self, 'next', slot=self.mdi_area.activateNextSubWindow))
+        self.menu_view.addSeparator()
+        self.menu_view.addAction(create_action(self, 'close current', slot=self.mdi_area.closeActiveSubWindow))
+        self.menu_view.addAction(create_action(self, 'close all', slot=self.mdi_area.closeAllSubWindows))
 
-        self.setLayout(self.v_layout)
+        # menuHelp
+        self.menu_help = qt.QMenu('Help')
+        self.menu_help.addAction(create_action(self, 'manual'))
+        self.menu_help.addSeparator()
+        self.menu_help.addAction(create_action(self, 'about'))
 
-    def start_stop_func(self):
-        if not self.timer.isActive():
-            self.ss_button.setText('Stop')
-            self.timer.start(100)
-        else:
-            self.ss_button.setText('Start')
-            self.timer.stop()
+        self.menuBar().addMenu(self.menu_file)
+        self.menuBar().addMenu(self.menu_view)
+        self.menuBar().addMenu(self.menu_help)
 
-    def update_func(self):
-        self.step += 1
-        self.label.setText(str(self.step))
+    # 后面章节补充
+    def __slt_pca__(self):
+        pass
 
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    demo = Demo()
-    demo.show()
+    import sys
+
+    app = qt.QApplication(sys.argv)
+    frmMain = FrmMain()
+    frmMain.showMaximized()
     sys.exit(app.exec_())
