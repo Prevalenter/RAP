@@ -1,3 +1,4 @@
+import os
 import sys
 sys.path.append("..")
 
@@ -12,7 +13,7 @@ from state import StateWidget
 from connet_widget import QApplication, ConnectWidget
 from ui.calibrate_widget import CalibrateWidget
 # from control_widget import ControlWidget
-from ui.para_set import ParaSetWidget
+from ui.setting import ParaSetWidget
 from utils import force_adapter
 
 from PyQt5 import QtCore, QtWidgets
@@ -29,15 +30,21 @@ class MainWidget(QWidget):
         self.angle_cur = [0]*6
         self.ft_cur = [0]*6
 
-        self.para_set = ParaSetWidget()
+        para_file_root = "../data/para/"
+        self.para_magager = {}
+        for fn in os.listdir(para_file_root):
+            print( para_file_root, fn )
+            self.para_magager[fn.split('.')[0]] = ParaSetWidget(path=para_file_root+fn)
+        # self.para_set =
 
 
         self.pre_action_dict = {
             'back zero': [0.4, 0.0, 0.8, 3.14159, 0, 3.14159],
             'compliance zero': [0.4, 0.2, 0.6, 3.14159, 0.0, 3.14159],
+            'contact zero': [0.6363, 0.130, 0.20, 3.14159, 0.0, 3.14159],
             # 'test': [0.4000158067460178, 0.0, 0.8000742610857445, 3.14159, 0.0, 3.14159],
             # 'to hole': [0.6363, 0.15408, 0.18055, 3.14159, 0, 3.14159],
-            'to hole': [0.6363, 0.15408, 0.190, 3.14159, 0, 3.14159]
+            'to hole': [0.6363, 0.15408, 0.20, 3.14159, 0, 3.14159]
         }
 
         self.axis = Axis(scale=0.1)
@@ -54,13 +61,13 @@ class MainWidget(QWidget):
         # self.compliance = False
         # self.drag_force_flag = False
 
-        self.cartesian_work_space= [[0.25, 0.65], # x
-                                    [0.00, 0.50], # y
-                                    [0.20, 1.00], # z
-                                    [-0.60, 0.60], # rot x
-                                    [-0.60, 0.60], # rot y
-                                    [-3.14, 3.14] # rot z
-                                   ]
+        # self.cartesian_work_space= [[0.25, 0.65], # x
+        #                             [0.00, 0.50], # y
+        #                             [0.20, 1.00], # z
+        #                             [-0.60, 0.60], # rot x
+        #                             [-0.60, 0.60], # rot y
+        #                             [-3.14, 3.14] # rot z
+        #                            ]
 
 
         self.control_tab = QTabWidget()

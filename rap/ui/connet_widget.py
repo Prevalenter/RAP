@@ -9,8 +9,6 @@ import sys
 sys.path.append('..')
 from connect.client import Client
 
-
-
 class ConnectWidget(QWidget):
     def __init__(self, up_ctrl=None):
         super().__init__()
@@ -136,7 +134,10 @@ class ConnectWidget(QWidget):
             self.angle_spin_list.append(QDoubleSpinBox())
             self.angle_spin_list[-1].setMinimum(-180)
             self.angle_spin_list[-1].setMaximum(180)
-            self.angle_spin_list[-1].setSingleStep(0.01)
+            self.angle_spin_list[-1].setSingleStep(0.001)
+
+            # if i<3:
+            # self.angle_spin_list[-1].setSuffix("M")
             layout_set_angle.addWidget(self.angle_spin_list[-1], i, 1)
         self.btn_apply_angle = QPushButton("Apply")
 
@@ -153,9 +154,14 @@ class ConnectWidget(QWidget):
         for idx, label in enumerate(label_list):
             layout_set_angle.addWidget(QLabel(label), idx, 0)
             self.xyz_spin_list.append(QDoubleSpinBox())
+            if idx<3:
+                self.xyz_spin_list[-1].setSuffix(' M')
+            else:
+                self.xyz_spin_list[-1].setSuffix(' Rad')
             self.xyz_spin_list[-1].setMinimum(-180)
             self.xyz_spin_list[-1].setMaximum(180)
-            self.xyz_spin_list[-1].setSingleStep(0.01)
+            self.xyz_spin_list[-1].setSingleStep(0.001)
+            self.xyz_spin_list[-1].setDecimals(3)
             layout_set_angle.addWidget(self.xyz_spin_list[-1], idx, 1)
         self.btn_apply_xyz = QPushButton("Apply")
         self.btn_apply_xyz.clicked.connect(self.on_apply_xyz)
@@ -173,7 +179,12 @@ class ConnectWidget(QWidget):
             self.Rot_spin_list.append(QDoubleSpinBox())
             self.Rot_spin_list[-1].setMinimum(-180)
             self.Rot_spin_list[-1].setMaximum(180)
-            self.Rot_spin_list[-1].setSingleStep(0.01)
+            self.Rot_spin_list[-1].setSingleStep(0.001)
+            self.Rot_spin_list[-1].setDecimals(3)
+            if idx<3:
+                self.Rot_spin_list[-1].setSuffix(' M')
+            else:
+                self.Rot_spin_list[-1].setSuffix(' Rad')
             layout_Rot_angle.addWidget(self.Rot_spin_list[-1], idx, 1)
         self.btn_apply_Rot = QPushButton("Apply")
         self.btn_apply_Rot.clicked.connect(self.on_apply_Rot)
@@ -256,10 +267,12 @@ class ConnectWidget(QWidget):
         zero = self.up_ctrl.pre_action_dict['back zero'].copy()
         print('in update tgt: ', self.up_ctrl.xyz_tgt)
         for i in range(6):
-            self.xyz_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i])
+            if i<3:
+                self.xyz_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i])
+            else:
+                self.xyz_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i])
 
         for i in range(3):
-            # self.Rot_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i]-zero[i])
             self.Rot_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i])
 
         self.Rot_spin_list[3].setValue(-(self.up_ctrl.xyz_tgt[5] - zero[5]))
@@ -390,18 +403,22 @@ class ConnectWidget(QWidget):
     def apply_Rot(self, pos_set):
         # print('before: ', pos_set)
         # cartesian space safe check
+
+        xyz_lim = [self.up_ctrl.para_magager["Safe Region"].para["cartesian XYZ"][k] for k in \
+                   self.up_ctrl.para_magager["Safe Region"].para["cartesian XYZ"]]
+
         for i in range(6):
             if i<3:
                 # pos_set[i] = np.clip(pos_set[i],
                 #                      self.up_ctrl.cartesian_work_space[i][0]-self.up_ctrl.pre_action_dict['back zero'][i],
                 #                      self.up_ctrl.cartesian_work_space[i][1]-self.up_ctrl.pre_action_dict['back zero'][i])
                 pos_set[i] = np.clip(pos_set[i],
-                                     self.up_ctrl.cartesian_work_space[i][0],
-                                     self.up_ctrl.cartesian_work_space[i][1])
+                                     xyz_lim[i][0],
+                                     xyz_lim[i][1])
             else:
                 pos_set[i] = np.clip(pos_set[i],
-                                     self.up_ctrl.cartesian_work_space[i][0],
-                                     self.up_ctrl.cartesian_work_space[i][1])
+                                     xyz_lim[i][0],
+                                     xyz_lim[i][1])
         # print('after: ', pos_set)
 
         zero = self.up_ctrl.pre_action_dict['back zero'].copy()

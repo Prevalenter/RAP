@@ -13,10 +13,10 @@ from utils.json_para import save_para, load_para
 
 
 class ParaSetWidget(QDialog):
-    def __init__(self, up_ctrl=None):
+    def __init__(self, path='../data/para/Compliance.json', up_ctrl=None):
         super().__init__()
 
-        self.path = '../data/para.json'
+        self.path = path
 
         self.up_ctrl = up_ctrl
         self.para = load_para(self.path)
@@ -56,11 +56,9 @@ class ParaSetWidget(QDialog):
                 state_box.setLayout(layout_state)
             state_box.setMaximumHeight(240)
 
-
             container.addWidget(state_box)
             container.addStretch(2)
         self.setLayout(container)
-
 
     def on_set_para(self):
         print("set para")
@@ -77,7 +75,6 @@ class ParaSetWidget(QDialog):
                         value_list.append( weidget.value() )
                     self.para[group_name][para_name] = value_list
                     print(value_list)
-
 
         print('-'*50)
         print(self.para)

@@ -11,7 +11,7 @@ def load_para(path):
 
 
 if __name__ == '__main__':
-    para = load_para("../data/para.json")
+    para = load_para("../data/Compliance.json")
     print(para)
 
     para['compliance']['M'] = [0.01, 0.01, 0.01, 0, 0, 0]

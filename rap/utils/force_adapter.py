@@ -87,9 +87,9 @@ class ComplianceForceAdapter:
 
                 F = force_contact_world
 
-                M = self.up_ctrl.para_set.para['Compliance']['M']
-                B = self.up_ctrl.para_set.para['Compliance']['B']
-                K = self.up_ctrl.para_set.para['Compliance']['K']
+                M = self.up_ctrl.para_magager['Compliance'].para["MBK"]['M']
+                B = self.up_ctrl.para_magager['Compliance'].para["MBK"]['B']
+                K = self.up_ctrl.para_magager['Compliance'].para["MBK"]['K']
 
                 dx = -( F - self.F_d - M * (self.ddx_r-self.ddx) - B * (self.dx_r - self.dx) )/K
                 dx = -dx
@@ -100,8 +100,6 @@ class ComplianceForceAdapter:
                 self.up_ctrl.connect_widget.apply_Rot(xyz_rot_new)
             else:
                 self.up_ctrl.connect_widget.apply_Rot(self.x_r)
-
-
 
 
 class PositionForceAdapter:
@@ -119,8 +117,6 @@ class PositionForceAdapter:
         # print('PositionForceAdapter run')
         if self.up_ctrl is not None and self.up_ctrl.force_flag_dict['Position Force']:
             print('PositionForceAdapter')
-
-
 
 
 

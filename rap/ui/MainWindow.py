@@ -1,3 +1,5 @@
+import os
+
 import PyQt5.QtWidgets as qt
 
 import sys
@@ -15,31 +17,31 @@ def create_action(obj_parent, text, slot = None, checkable = False, icon = None)
     return action
 
 class FrmMain(qt.QMainWindow):
-    '''
-    demo for pca algorithm
-    '''
-
     def __init__(self, parent=None):
         super(FrmMain, self).__init__(parent)
-        # 界面布局
         self.__initUI__()
 
-    # 函数前增加 __的目的是使得函数为私有，后面也加__ 完全是为了对称起来好看
     def __initUI__(self):
         self.setWindowTitle('Robot Assembly Platform')
         # self.mdi_area = qt.QMdiArea(self)
         self.main_widget = MainWidget()
         self.setCentralWidget(self.main_widget)
 
-        #
-        self.menu_help = qt.QMenu('Files')
-        self.menu_help.addAction(create_action(self, 'Setting', self.on_setting))
 
+        self.menu_help = qt.QMenu('Setting')
+        # print(self.main_widget.para_magager)
+        for k in self.main_widget.para_magager:
+
+            self.menu_help.addAction(create_action(self, f'{k} Set',
+                                                   slot=self.on_setting(k)))
         self.menuBar().addMenu(self.menu_help)
 
-    def on_setting(self):
+    def on_setting(self, k):
         # print('on setting')
-        self.main_widget.para_set.show()
+        def f():
+            print('key is: ', k)
+            self.main_widget.para_magager[k].show()
+        return f
 
 
 
