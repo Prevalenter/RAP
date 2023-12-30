@@ -6,8 +6,10 @@ import numpy as np
 from PyQt5.QtCore import QTimer, QThread
 from threading import Timer, Thread
 
+import time
+
 class DragForceAdapter:
-    def __init__(self, up_ctrl=None, dt=0.1):
+    def __init__(self, up_ctrl=None, dt=0.05):
         self.up_ctrl = up_ctrl
         self.dt = dt
 
@@ -17,6 +19,8 @@ class DragForceAdapter:
 
     def run(self):
         if self.up_ctrl is not None and self.up_ctrl.force_flag_dict['Drag']:
+            t = time.time()
+
             force_contact_world = self.up_ctrl.ft.force_contact_world.copy()
             force_contact_norm = np.linalg.norm(force_contact_world[:3])
             if force_contact_norm!=0:
@@ -38,12 +42,12 @@ class DragForceAdapter:
                 xyz_rot_new += dx
 
                 self.up_ctrl.connect_widget.apply_Rot(xyz_rot_new)
-
+            print('DragForceAdapter out', time.time()-t)
 
 
 
 class ComplianceForceAdapter:
-    def __init__(self, up_ctrl=None, dt=0.1):
+    def __init__(self, up_ctrl=None, dt=0.05):
 
         self.up_ctrl = up_ctrl
         self.dt = dt
@@ -74,6 +78,8 @@ class ComplianceForceAdapter:
     def run(self):
         # print('ComplianceForceAdapter run')
         if self.up_ctrl is not None and self.up_ctrl.force_flag_dict['Compliance']:
+            t = time.time()
+
             force_contact_world = self.up_ctrl.ft.force_contact_world.copy()
             # force_contact_world = np.array([10, 0, 0, 0, 0, 0])
             force_contact_norm = np.linalg.norm(force_contact_world[:3])
@@ -101,9 +107,11 @@ class ComplianceForceAdapter:
             else:
                 self.up_ctrl.connect_widget.apply_Rot(self.x_r)
 
+            print('ComplianceForceAdapter out', time.time()-t)
+
 
 class PositionForceAdapter:
-    def __init__(self, up_ctrl=None, dt=0.1):
+    def __init__(self, up_ctrl=None, dt=0.05):
 
         self.up_ctrl = up_ctrl
         self.dt = dt
@@ -121,7 +129,7 @@ class PositionForceAdapter:
 
 
 if __name__ == '__main__':
-    dt = 0.1
+    dt = 0.05
 
     fa = DragForceAdapter()
 

@@ -225,12 +225,9 @@ class ConnectWidget(QWidget):
 
                     self.up_ctrl.angle_cur = [float(i) for i in msg_angle[:6]]
 
-                    # self.print_angles_cur()
-                    self.up_ctrl.update(cur=True)
+                    # self.up_ctrl.update(cur=True)
 
                     if self.data_agnle_init==False:
-                        # for i in range(6):
-                        #     self.spinctrl_angle_list[i].SetValue(self.up_ctrl.angle_cur[i])
                         self.up_ctrl.angles_tgt = self.up_ctrl.angle_cur
                         self.up_ctrl.update(tgt=True)
                         self.data_agnle_init = True
@@ -250,16 +247,8 @@ class ConnectWidget(QWidget):
             elif head=="ft":
                 msg_ft = msg_rcv_slice.split(': ')[-1].split(' ')
                 if len(msg_ft)>=6:
-
                     self.up_ctrl.ft_cur = [float(i) for i in msg_ft[:6]]
-
                     self.up_ctrl.ft.set_data(self.up_ctrl.ft_cur, self.up_ctrl.xyz_cur)
-
-                    # self.ft_traj.append(self.up_ctrl.ft.data)
-                    #
-                    # if len(self.ft_traj)%50==0:
-                    #     print('save')
-                    #     np.save('ft_traj', np.array(self.ft_traj))
 
 
     def update_tgt(self):

@@ -18,7 +18,7 @@ from utils import force_adapter
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QApplication, QTabWidget, QMainWindow
-
+from PyQt5.QtCore import QTimer
 
 class MainWidget(QWidget):
 # class MainWindow(QWi):
@@ -107,16 +107,27 @@ class MainWidget(QWidget):
 
         self.setLayout(layout)
 
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.updata_cur)
+        self.timer.start(int(500))
+        # self.up_ctrl.update(cur=True)
+
+    def updata_cur(self):
+        self.update(cur=True)
+
     def update(self, tgt=False, cur=False, sent_tgt=False):
         if tgt:
             print('update tgt!')
             self.connect_widget.update_tgt()
         if sent_tgt:
             self.connect_widget.apply_xyz()
-        self.plot.update()
-        self.state_widget.update(self.angle_cur, self.xyz_cur, self.ft.ft_sensor, self.ft.ft_contact)
 
-        # print('UI update down')
+        if cur:
+            self.plot.update()
+            self.state_widget.update(self.angle_cur, self.xyz_cur, self.ft.ft_sensor, self.ft.ft_contact)
+
+        print('UI update down', tgt, cur, sent_tgt)
         # self.plot2d.update()
 
 

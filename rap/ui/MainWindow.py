@@ -27,11 +27,9 @@ class FrmMain(qt.QMainWindow):
         self.main_widget = MainWidget()
         self.setCentralWidget(self.main_widget)
 
-
         self.menu_help = qt.QMenu('Setting')
         # print(self.main_widget.para_magager)
         for k in self.main_widget.para_magager:
-
             self.menu_help.addAction(create_action(self, f'{k} Set',
                                                    slot=self.on_setting(k)))
         self.menuBar().addMenu(self.menu_help)
