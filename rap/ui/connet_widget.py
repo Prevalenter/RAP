@@ -180,7 +180,7 @@ class ConnectWidget(QWidget):
             self.Rot_spin_list[-1].setMinimum(-180)
             self.Rot_spin_list[-1].setMaximum(180)
             self.Rot_spin_list[-1].setSingleStep(0.001)
-            self.Rot_spin_list[-1].setDecimals(3)
+            self.Rot_spin_list[-1].setDecimals(4)
             if idx<3:
                 self.Rot_spin_list[-1].setSuffix(' M')
             else:
@@ -346,6 +346,9 @@ class ConnectWidget(QWidget):
 
         if b_text=='Compliance' and b.isChecked():
             self.up_ctrl.compliance_fa.x_r = self.up_ctrl.connect_widget.get_tgt_xyz_rot().copy()
+
+        if b_text=='Position Force' and b.isChecked():
+            self.up_ctrl.position_force_fa.x_r = self.up_ctrl.connect_widget.get_tgt_xyz_rot().copy()
 
         print('force_flag_dict', self.up_ctrl.force_flag_dict)
 

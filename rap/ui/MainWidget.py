@@ -35,13 +35,12 @@ class MainWidget(QWidget):
         for fn in os.listdir(para_file_root):
             print( para_file_root, fn )
             self.para_magager[fn.split('.')[0]] = ParaSetWidget(path=para_file_root+fn)
-        # self.para_set =
 
 
         self.pre_action_dict = {
             'back zero': [0.4, 0.0, 0.8, 3.14159, 0, 3.14159],
             'compliance zero': [0.4, 0.2, 0.6, 3.14159, 0.0, 3.14159],
-            'contact zero': [0.6363, 0.130, 0.20, 3.14159, 0.0, 3.14159],
+            'contact zero': [0.6360, 0.125, 0.18, 3.14159, 0.0, 3.14159],
             # 'test': [0.4000158067460178, 0.0, 0.8000742610857445, 3.14159, 0.0, 3.14159],
             # 'to hole': [0.6363, 0.15408, 0.18055, 3.14159, 0, 3.14159],
             'to hole': [0.6363, 0.15408, 0.20, 3.14159, 0, 3.14159]
