@@ -22,6 +22,10 @@ class ForceSensor:
 
         self.scale = scale
         self.axis_base = np.array([0, 0, 0, 1])[:, None]
+
+        self.load_ft_para()
+
+    def load_ft_para(self):
         self.para_force, self.para_torque = get_ft_para()
 
 

@@ -47,9 +47,12 @@ class CalibrateWidget(QWidget):
         # layout_ip.addWidget(le2, 1, 1)
 
         self.btn_get_data = QPushButton('Get Ident Data')
+        self.btn_load_data = QPushButton('Re-Ident Para')
         self.btn_get_data.clicked.connect(self.on_get_data)
+        self.btn_load_data.clicked.connect(self.on_reident)
         # self.btn_disconnect = QPushButton('Disconnect')
         layout_ip.addWidget(self.btn_get_data, 0, 0)
+        layout_ip.addWidget(self.btn_load_data, 0, 1)
         # layout_ip.addWidget(self.btn_disconnect, 3, 1)
 
         ip_box.setLayout(layout_ip)
@@ -62,6 +65,10 @@ class CalibrateWidget(QWidget):
         self.setLayout(container)
 
 
+    def on_reident(self):
+        self.up_ctrl.ft.load_ft_para()
+        print('reload identification para')
+
     def on_get_data(self):
 
         self.timer_recoder = QTimer(self)
@@ -71,27 +78,27 @@ class CalibrateWidget(QWidget):
         self.ft_traj = []
 
         timer = QTimer(self)
-        timer.singleShot(0, lambda : self.up_ctrl.connect_widget.apply_Rot([0, 0, 0, 0.5, 0, 0]))
+        timer.singleShot(0, lambda : self.up_ctrl.connect_widget.apply_Rot([0.4, 0.0, 0.8, 0.5, 0, 0]))
         timer.stop()
 
         timer = QTimer(self)
-        timer.singleShot(4000, lambda : self.up_ctrl.connect_widget.apply_Rot([0, 0, 0, 0.5, 0.5, 0]))
+        timer.singleShot(4000, lambda : self.up_ctrl.connect_widget.apply_Rot([0.4, 0.0, 0.8, 0.5, 0.5, 0]))
         timer.stop()
 
         timer = QTimer(self)
-        timer.singleShot(8000, lambda : self.up_ctrl.connect_widget.apply_Rot([0, 0, 0, 0.5, 0.5, 0.5]))
+        timer.singleShot(8000, lambda : self.up_ctrl.connect_widget.apply_Rot([0.4, 0.0, 0.8, 0.5, 0.5, 0.5]))
         timer.stop()
 
         timer = QTimer(self)
-        timer.singleShot(12000, lambda : self.up_ctrl.connect_widget.apply_Rot([0, 0, 0, -0.5, 0, 0]))
+        timer.singleShot(12000, lambda : self.up_ctrl.connect_widget.apply_Rot([0.4, 0.0, 0.8, -0.5, 0, 0]))
         timer.stop()
 
         timer = QTimer(self)
-        timer.singleShot(16000, lambda : self.up_ctrl.connect_widget.apply_Rot([0, 0, 0, -0.5, 0.0, -0.5]))
+        timer.singleShot(16000, lambda : self.up_ctrl.connect_widget.apply_Rot([0.4, 0.0, 0.8, -0.5, 0.0, -0.5]))
         timer.stop()
 
         timer = QTimer(self)
-        timer.singleShot(20000, lambda : self.up_ctrl.connect_widget.apply_Rot([0, 0, 0, -0.5, -0.5, -0.5]))
+        timer.singleShot(20000, lambda : self.up_ctrl.connect_widget.apply_Rot([0.4, 0.0, 0.8, -0.5, -0.5, -0.5]))
         timer.stop()
 
     def step_recoder(self):
