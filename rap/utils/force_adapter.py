@@ -181,7 +181,7 @@ class PositionForceAdapter:
                     dx[2] = 5e-6*np.sign(error[2])
 
 
-                if np.abs(error[2])<1 and self.x_r[1]<0.135:
+                if np.abs(error[2])<1 and self.x_r[1]<0.153:
                     dx[1] = (5e-5)
 
                 self.error_last = error

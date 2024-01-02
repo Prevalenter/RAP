@@ -14,6 +14,7 @@ from connet_widget import QApplication, ConnectWidget
 from ui.calibrate_widget import CalibrateWidget
 # from control_widget import ControlWidget
 from ui.setting import ParaSetWidget
+from ui.recoder import FTRecoderWidget
 from utils import force_adapter
 
 from PyQt5 import QtCore, QtWidgets
@@ -35,6 +36,8 @@ class MainWidget(QWidget):
         for fn in os.listdir(para_file_root):
             print( para_file_root, fn )
             self.para_magager[fn.split('.')[0]] = ParaSetWidget(path=para_file_root+fn)
+
+        self.ft_recoder = FTRecoderWidget()
 
 
         self.pre_action_dict = {

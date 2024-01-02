@@ -27,12 +27,22 @@ class FrmMain(qt.QMainWindow):
         self.main_widget = MainWidget()
         self.setCentralWidget(self.main_widget)
 
-        self.menu_help = qt.QMenu('Setting')
+
+        self.menu_monitor = qt.QMenu('Monitor')
+        # print(self.main_widget.para_magager)
+        # for k in self.main_widget.para_magager:
+        self.menu_monitor.addAction(create_action(self, 'FT monitor',
+                                               slot= lambda : self.main_widget.ft_recoder.show()))
+        self.menuBar().addMenu(self.menu_monitor)
+
+
+
+        self.menu_set = qt.QMenu('Setting')
         # print(self.main_widget.para_magager)
         for k in self.main_widget.para_magager:
-            self.menu_help.addAction(create_action(self, f'{k} Set',
+            self.menu_set.addAction(create_action(self, f'{k} Set',
                                                    slot=self.on_setting(k)))
-        self.menuBar().addMenu(self.menu_help)
+        self.menuBar().addMenu(self.menu_set)
 
     def on_setting(self, k):
         # print('on setting')
