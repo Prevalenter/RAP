@@ -78,7 +78,6 @@ class FTRecoderWidget(QDialog):
         super().__init__()
         self.up_ctrl = up_ctrl
 
-
         self.step_index = 0
         # self.dt = 0.05
 
@@ -86,22 +85,13 @@ class FTRecoderWidget(QDialog):
             'ylim': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
             'data': [],
             'dt': 0.050,
-            'start': True,
+            'start': False,
             'slider_value': 0
         }
         self.ui_init()
 
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.step)
-        # self.timer.start(int(1000*self.para['dt']))
-        self.timer.start(50)
-
-        self.plot_timer = QTimer(self)
-        self.plot_timer.timeout.connect(self.update)
-        self.plot_timer.start(500)
-
-
     def update(self):
+        # if self.check_plot.isChecked():
         t = time.time()
         self.plot2d_panel.update(self.para)
         len_data = len(self.para['data'])
@@ -112,14 +102,12 @@ class FTRecoderWidget(QDialog):
         print('step using: ', time.time()-t)
 
     def step(self):
+        # if self.para['start']:
         t = time.time()
-        if self.para['start']:
-            data_i = self.test_data()
-            self.para['data'].append(data_i)
-        self.step_index += 1
+        data_i = self.test_data()
+        self.para['data'].append(data_i)
         print(time.time()-t)
-
-
+        self.step_index += 1
 
     def test_data(self):
         t = self.para['dt'] * self.step_index
@@ -155,6 +143,8 @@ class FTRecoderWidget(QDialog):
         self.btn_save = QPushButton('Save')
         self.btn_replay = QPushButton('Replay')
         self.btn_clear = QPushButton('Clear')
+        # self.check_plot = QCheckBox("Plot")
+        # layout_state.addWidget(self.check_plot, 3, 0)
         layout_state.addWidget(self.btn_set, 3, 1)
         layout_state.addWidget(self.btn_load, 3, 2)
         layout_state.addWidget(self.btn_save, 3, 3)
@@ -189,7 +179,6 @@ class FTRecoderWidget(QDialog):
         print(self.para['slider_value'])
         self.plot2d_panel.update(self.para)
 
-
     def on_load(self):
         print('on load')
         # fileName_choose = 'test.pkl'
@@ -222,7 +211,6 @@ class FTRecoderWidget(QDialog):
             with open(fileName_choose, "wb") as f:
                 pickle.dump(self.para, f)
 
-
     def on_set(self):
         for idx, type in enumerate(self.state_le_list.keys()):
             for j in range(6):
@@ -233,20 +221,35 @@ class FTRecoderWidget(QDialog):
                     # self.state_le_list[type][j].setValue(self.para['ylim'][j][0]
                     self.para['ylim'][j][0] = self.state_le_list[type][j].value()
 
-
     def on_start(self):
         # self.timer.start(int(1000*self.para['dt']))
+        self.data_timer.start(50)
         self.para['start'] = True
 
     def on_stop(self):
         print('on stop')
-        # self.timer.stop()
+        self.data_timer.stop()
         self.para['start'] = False
 
     def on_clear(self):
         self.para['data'] = []
         self.plot2d_panel.update(self.para)
 
+    def showEvent(self, a0):
+        print('show evnet')
+        self.data_timer = QTimer(self)
+        self.data_timer.timeout.connect(self.step)
+        # self.timer.start(int(1000*self.para['dt']))
+        # self.data_timer.start(50)
+
+        self.plot_timer = QTimer(self)
+        self.plot_timer.timeout.connect(self.update)
+        self.plot_timer.start(500)
+
+    def closeEvent(self, a0):
+        print('close event')
+        self.data_timer.stop()
+        # self.plot_timer.stop()
 
 class MyWindow(QWidget):
     def __init__(self):

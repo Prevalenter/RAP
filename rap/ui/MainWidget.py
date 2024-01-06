@@ -110,9 +110,9 @@ class MainWidget(QWidget):
         self.setLayout(layout)
 
 
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.updata_cur)
-        self.timer.start(int(500))
+        # self.timer = QTimer(self)
+        # self.timer.timeout.connect(self.updata_cur)
+        # self.timer.start(int(500))
         # self.up_ctrl.update(cur=True)
 
     def updata_cur(self):

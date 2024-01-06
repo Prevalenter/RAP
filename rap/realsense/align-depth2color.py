@@ -53,6 +53,7 @@ print("Depth Scale is: " , depth_scale)
 #  clipping_distance_in_meters meters away
 clipping_distance_in_meters = 1.5 #1 meter
 clipping_distance = clipping_distance_in_meters / depth_scale
+print('clipping_distance', clipping_distance)
 
 # Create an align object
 # rs.align allows us to perform alignment of depth frames to others frames
@@ -65,6 +66,7 @@ try:
     while True:
         # Get frameset of color and depth
         frames = pipeline.wait_for_frames()
+
         # frames.get_depth_frame() is a 640x360 depth image
 
         # Align the depth frame to color frame

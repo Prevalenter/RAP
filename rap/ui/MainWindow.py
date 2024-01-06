@@ -5,7 +5,7 @@ import PyQt5.QtWidgets as qt
 import sys
 sys.path.append('..')
 from ui.MainWidget import MainWidget
-
+from ui.recoder import FTRecoderWidget
 
 def create_action(obj_parent, text, slot = None, checkable = False, icon = None):
     action = qt.QAction(text, obj_parent)
@@ -31,18 +31,18 @@ class FrmMain(qt.QMainWindow):
         self.menu_monitor = qt.QMenu('Monitor')
         # print(self.main_widget.para_magager)
         # for k in self.main_widget.para_magager:
+        # self.menu_monitor.addAction(create_action(self, 'FT monitor',
+        #                                        slot= lambda : FTRecoderWidget().show()))
         self.menu_monitor.addAction(create_action(self, 'FT monitor',
                                                slot= lambda : self.main_widget.ft_recoder.show()))
         self.menuBar().addMenu(self.menu_monitor)
 
-
-
-        self.menu_set = qt.QMenu('Setting')
-        # print(self.main_widget.para_magager)
-        for k in self.main_widget.para_magager:
-            self.menu_set.addAction(create_action(self, f'{k} Set',
-                                                   slot=self.on_setting(k)))
-        self.menuBar().addMenu(self.menu_set)
+        # self.menu_set = qt.QMenu('Setting')
+        # # print(self.main_widget.para_magager)
+        # for k in self.main_widget.para_magager:
+        #     self.menu_set.addAction(create_action(self, f'{k} Set',
+        #                                            slot=self.on_setting(k)))
+        # self.menuBar().addMenu(self.menu_set)
 
     def on_setting(self, k):
         # print('on setting')
