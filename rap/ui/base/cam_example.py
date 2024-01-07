@@ -31,8 +31,9 @@ class App(QWidget):
         self.label.setPixmap(QPixmap.fromImage(image))
 
     def initUI(self):
-        self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        # self.title = 'test'
+        # self.setWindowTitle(self.title)
+        # self.setGeometry(self.left, self.top, self.width, self.height)
         self.resize(1800, 1200)
         # create a label
         self.label = QLabel(self)

@@ -9,17 +9,20 @@ import matplotlib
 matplotlib.use('Qt5Agg')
 from plot3d import Ui3dWindow
 from plot2d import Plot2dWindow, PlotMainWindow
-from state import StateWidget
+from base.state import StateWidget
 from connet_widget import QApplication, ConnectWidget
 from ui.calibrate_widget import CalibrateWidget
 # from control_widget import ControlWidget
 from ui.setting import ParaSetWidget
 from ui.recoder import FTRecoderWidget
+from ui.menu.data_collect.diffusion_peg_in_hole import DiffusionPegInHoleWidget
 from utils import force_adapter
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QApplication, QTabWidget, QMainWindow
 from PyQt5.QtCore import QTimer
+
+from utils.realsense import SingleReansense
 
 class MainWidget(QWidget):
 # class MainWindow(QWi):
@@ -37,7 +40,16 @@ class MainWidget(QWidget):
             print( para_file_root, fn )
             self.para_magager[fn.split('.')[0]] = ParaSetWidget(path=para_file_root+fn)
 
+        self.dev_id_list = ['147122075207', '147322070524']
+        self.sing_cam_list = []
+        for i in range( len(self.dev_id_list ) ):
+            self.sing_cam_list.append( SingleReansense(self.dev_id_list[i]) )
+
+
         self.ft_recoder = FTRecoderWidget()
+        self.peg_in_hole_widget = DiffusionPegInHoleWidget(self.sing_cam_list, up_ctrl=self)
+        self.peg_in_hole_widget.show()
+        # self.peg_in_hole.show()
 
 
         self.pre_action_dict = {

@@ -7,6 +7,8 @@ sys.path.append('..')
 from ui.MainWidget import MainWidget
 from ui.recoder import FTRecoderWidget
 
+from ui.menu.data_collect.diffusion_peg_in_hole import DiffusionPegInHoleWidget
+
 def create_action(obj_parent, text, slot = None, checkable = False, icon = None):
     action = qt.QAction(text, obj_parent)
     if slot:
@@ -27,6 +29,11 @@ class FrmMain(qt.QMainWindow):
         self.main_widget = MainWidget()
         self.setCentralWidget(self.main_widget)
 
+        self.menu_data = qt.QMenu('Data')
+        self.menu_data.addAction(create_action(self, 'Peg in Hole',
+                                        slot= lambda : self.main_widget.peg_in_hole_widget.show()))
+
+        # DiffusionPegInHoleWidget().show()
 
         self.menu_monitor = qt.QMenu('Monitor')
         # print(self.main_widget.para_magager)
@@ -35,6 +42,9 @@ class FrmMain(qt.QMainWindow):
         #                                        slot= lambda : FTRecoderWidget().show()))
         self.menu_monitor.addAction(create_action(self, 'FT monitor',
                                                slot= lambda : self.main_widget.ft_recoder.show()))
+
+
+        self.menuBar().addMenu(self.menu_data)
         self.menuBar().addMenu(self.menu_monitor)
 
         # self.menu_set = qt.QMenu('Setting')
