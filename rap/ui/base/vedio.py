@@ -16,11 +16,6 @@ sys.path.append('../../')
 
 from utils.realsense import SingleReansense, get_dev_id_list
 
-# dev_id_list = ['147122075207',
-#                '147322070524']
-
-
-
 class CamThread(QThread):
     # def __init__(self, dev_id):
     changePixmap = pyqtSignal(QImage)
@@ -38,6 +33,7 @@ class CamThread(QThread):
         while True:
             t = time.time()
             img = self.single_cam.get_frame()
+            # self.img = img
 
             h, w, c = img.shape
             convertToQtFormat = QImage(img.data, w, h, QImage.Format_RGB888)

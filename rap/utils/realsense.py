@@ -2,12 +2,21 @@ import pyrealsense2 as rs
 import numpy as np
 import cv2
 
+def rs_restart():
+    ctx = rs.context()
+    for idx, dev in enumerate(ctx.query_devices()):
+        sensor_sn = dev.get_info(rs.camera_info.serial_number)
+        dev.hardware_reset()
+        print('hardware reset: ', sensor_sn)
+
 def get_dev_id_list():
     dev_id_list = []
     ctx = rs.context()
     for idx, dev in enumerate(ctx.query_devices()):
         sensor_sn = dev.get_info(rs.camera_info.serial_number)
         dev_id_list.append(sensor_sn)
+
+        # dev.hardware_reset()
     return dev_id_list
 
 
@@ -21,7 +30,13 @@ class SingleReansense:
         self.cam_enable()
 
     def cam_enable(self):
+
         pipeline = rs.pipeline()
+
+        # print( dir( ctx.query_devices()[0] ) )
+        # print(breakdown)
+
+        # pipeline.stop()
 
         config = rs.config()
         # config.enable_device(dev_id)
@@ -43,7 +58,13 @@ class SingleReansense:
 
     def get_rgbd(self):
         # Get frameset of color and depth
-        frames = self.pipeline.wait_for_frames()
+        try:
+            frames = self.pipeline.wait_for_frames()
+        except:
+            rs_restart()
+            frames = self.pipeline.wait_for_frames()
+
+        # print( dir(self.pipeline) )
 
         # Align the depth frame to color frame
         aligned_frames = self.align.process(frames)
@@ -63,15 +84,19 @@ class SingleReansense:
 
     def get_frame(self):
 
-        depth_image = []
-        color_image = []
+        # depth_image = []
+        # color_image = []
+        #
+        # depth_image_i, color_image_i = self.get_rgbd()
+        # depth_image.append(depth_image_i)
+        # color_image.append(color_image_i)
+        #
+        # depth_image = np.vstack(depth_image)
+        # color_image = np.vstack(color_image)
 
-        depth_image_i, color_image_i = self.get_rgbd()
-        depth_image.append(depth_image_i)
-        color_image.append(color_image_i)
-
-        depth_image = np.vstack(depth_image)
-        color_image = np.vstack(color_image)
+        depth_image, color_image = self.get_rgbd()
+        # print(depth_image.shape, color_image.shape)
+        self.rgbd = np.concatenate([color_image, depth_image[:, :, None]], axis=2)
 
         depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
