@@ -211,6 +211,8 @@ class PositionForceAdapter:
             # print(dx)
             return np.array([0, 0, np.exp(100*dx)+3, 0, 0, 0])
 
+
+
 if __name__ == '__main__':
     dt = 0.05
 

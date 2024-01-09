@@ -47,8 +47,8 @@ class MainWidget(QWidget):
 
 
         self.ft_recoder = FTRecoderWidget()
-        self.peg_in_hole_widget = DiffusionPegInHoleWidget(self.sing_cam_list, up_ctrl=self)
-        self.peg_in_hole_widget.show()
+        # self.peg_in_hole_widget = DiffusionPegInHoleWidget(self.sing_cam_list, up_ctrl=self)
+        # self.peg_in_hole_widget.show()
         # self.peg_in_hole.show()
 
 
@@ -121,10 +121,9 @@ class MainWidget(QWidget):
 
         self.setLayout(layout)
 
-
-        # self.timer = QTimer(self)
-        # self.timer.timeout.connect(self.updata_cur)
-        # self.timer.start(int(500))
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.updata_cur)
+        self.timer.start(int(500))
         # self.up_ctrl.update(cur=True)
 
     def updata_cur(self):

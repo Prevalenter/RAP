@@ -15,6 +15,8 @@ from ui.base.vedio import VedioWidget
 from ui.base.state import StateWidget
 from utils.realsense import SingleReansense
 
+from ui.menu.data_collect.peg_in_hole_control import PegInHoleContral
+
 import cv2
 
 # size = 720*16//9, 720
@@ -40,6 +42,9 @@ class DiffusionPegInHoleWidget(QDialog):
         self.step_index = 0
 
         self.single_cam_list = single_cam_list
+
+        self.peg_in_hole_ctrl = PegInHoleContral(up_ctrl=up_ctrl)
+
         self.data_init()
         self.ui_init()
 
@@ -54,9 +59,23 @@ class DiffusionPegInHoleWidget(QDialog):
     def ui_init(self):
         container = QVBoxLayout()
 
-        self.label_state = QLabel("")
+        self.resize(650, 800)
 
-        self.ctrl_layout = QHBoxLayout()
+        self.label_cam_state = QLabel("")
+
+        self.label_ctrl_state = QLabel("Control: ")
+
+        self.btn_initial_position = QPushButton("Initial Position")
+        self.btn_random_position = QPushButton("Random Position")
+        self.btn_run_assemble = QPushButton("Run Assemble")
+
+        self.btn_initial_position.clicked.connect(self.on_initial_position)
+        self.btn_random_position.clicked.connect(self.on_random_position)
+        self.btn_run_assemble.clicked.connect(self.on_run_assemble)
+
+
+        # self.ctrl_layout = QHBoxLayout()
+        self.ctrl_layout = QGridLayout()
         self.btn_start = QPushButton("Start")
         self.btn_stop = QPushButton("Stop")
         self.btn_clear = QPushButton("Clear")
@@ -67,11 +86,20 @@ class DiffusionPegInHoleWidget(QDialog):
         self.btn_clear.clicked.connect(self.on_clear)
         self.btn_save.clicked.connect(self.on_save)
 
-        self.ctrl_layout.addWidget(self.label_state)
-        self.ctrl_layout.addWidget(self.btn_start)
-        self.ctrl_layout.addWidget(self.btn_stop)
-        self.ctrl_layout.addWidget(self.btn_clear)
-        self.ctrl_layout.addWidget(self.btn_save)
+        # self.ctrl_layout.addWidget(self.label_state)
+        # self.ctrl_layout.addWidget(self.btn_start)
+        # self.ctrl_layout.addWidget(self.btn_stop)
+        # self.ctrl_layout.addWidget(self.btn_clear)
+        # self.ctrl_layout.addWidget(self.btn_save)
+        self.ctrl_layout.addWidget(self.btn_initial_position, 0, 1)
+        self.ctrl_layout.addWidget(self.btn_random_position, 0, 2)
+        self.ctrl_layout.addWidget(self.btn_run_assemble, 0, 3)
+
+        self.ctrl_layout.addWidget(self.label_cam_state, 1, 0)
+        self.ctrl_layout.addWidget(self.btn_start, 1, 1)
+        self.ctrl_layout.addWidget(self.btn_stop, 1, 2)
+        self.ctrl_layout.addWidget(self.btn_clear, 1, 3)
+        self.ctrl_layout.addWidget(self.btn_save, 1, 4)
 
 
         self.state_widget = StateWidget()
@@ -98,6 +126,21 @@ class DiffusionPegInHoleWidget(QDialog):
         self.data_timer = QTimer(self)
         self.data_timer.timeout.connect(self.get_step_data)
           # every 10,000 milliseconds
+
+    def on_initial_position(self):
+        print("on_initial_position")
+        self.peg_in_hole_ctrl.timer.stop()
+
+    def on_random_position(self):
+        print("on_random_position")
+        self.peg_in_hole_ctrl.timer.stop()
+
+    def on_run_assemble(self):
+        print("on_run_assemble")
+        self.peg_in_hole_ctrl.x_r = self.up_ctrl.connect_widget.get_tgt_xyz_rot().copy()
+
+        self.peg_in_hole_ctrl.timer.start(int(self.peg_in_hole_ctrl.dt*1000))
+
 
     def on_save(self):
         self.on_stop()
@@ -175,7 +218,7 @@ class DiffusionPegInHoleWidget(QDialog):
         # print('diffusion peg in hole update')
 
         idx = self.data["idx"]
-        self.label_state.setText(f"length of data: {idx}")
+        self.label_cam_state.setText(f"Camera:    length of data: {idx}")
 
         if self.up_ctrl is not None:
 
@@ -220,7 +263,7 @@ class MyWindow(QWidget):
         self.peg_in_hole_widget = DiffusionPegInHoleWidget( self.sing_cam_list, up_ctrl=None )
         self.peg_in_hole_widget.setParent(self)
 
-        self.resize(1000, 800)
+        self.resize(800, 800)
 
 
     def update(self, tgt=False, cur=False, sent_tgt=False):
