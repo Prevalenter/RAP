@@ -204,7 +204,7 @@ class DiffusionPegInHoleWidget(QDialog):
         # }
         if self.up_ctrl is not None:
             self.data["img"].append( np.array([ cam.th.single_cam.rgbd for cam in self.cam_list]) )
-            self.data['force_torque'].append(np.array(self.up_ctrl.ft.ft_contact))
+            self.data['force_torque'].append(np.array(self.up_ctrl.ft.force_contact_world))
             self.data['xyz_rot'].append(np.array(self.up_ctrl.xyz_cur))
         else:
             self.data["img"].append( np.array([ cam.th.single_cam.rgbd for cam in self.cam_list]) )
@@ -225,7 +225,7 @@ class DiffusionPegInHoleWidget(QDialog):
             self.state_widget.update(self.up_ctrl.angle_cur,
                                      self.up_ctrl.xyz_cur,
                                      self.up_ctrl.ft.ft_sensor,
-                                     self.up_ctrl.ft.ft_contact)
+                                     self.up_ctrl.ft.force_contact_world)
 
 
         else:

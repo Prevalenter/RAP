@@ -54,7 +54,10 @@ class ForceSensor:
         end = end[:3, 0]
         self.force_contact_world[:3] = end - begin
 
-        self.force_contact_world[3:] = self.ft_contact[3:]
+        # self.force_contact_world[3:] = self.ft_contact[3:]
+        self.force_contact_world[3] = self.ft_contact[4]
+        self.force_contact_world[4] = self.ft_contact[3]
+        self.force_contact_world[5] = -self.ft_contact[5]
 
         gl_ctrl.color.value = gl_ctrl.new_color
         gl_ctrl.vbo_ft = gl_ctrl.ctx.buffer(np.array([begin, end], dtype=np.float32))

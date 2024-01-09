@@ -47,8 +47,8 @@ class MainWidget(QWidget):
 
 
         self.ft_recoder = FTRecoderWidget()
-        # self.peg_in_hole_widget = DiffusionPegInHoleWidget(self.sing_cam_list, up_ctrl=self)
-        # self.peg_in_hole_widget.show()
+        self.peg_in_hole_widget = DiffusionPegInHoleWidget(self.sing_cam_list, up_ctrl=self)
+        self.peg_in_hole_widget.show()
         # self.peg_in_hole.show()
 
 
@@ -138,7 +138,10 @@ class MainWidget(QWidget):
 
         if cur:
             self.plot.update()
-            self.state_widget.update(self.angle_cur, self.xyz_cur, self.ft.ft_sensor, self.ft.ft_contact)
+            # self.state_widget.update(self.angle_cur, self.xyz_cur, self.ft.ft_sensor, self.ft.ft_contact)
+
+            # force_contact_world
+            self.state_widget.update(self.angle_cur, self.xyz_cur, self.ft.ft_sensor, self.ft.force_contact_world)
 
         print('UI update down', tgt, cur, sent_tgt)
         # self.plot2d.update()

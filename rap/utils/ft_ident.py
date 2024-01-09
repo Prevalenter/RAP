@@ -103,7 +103,6 @@ def get_torque_contact_once(para, ft_cur):
     torque_contact = ft_cur[3:] - torque_gravity
     return torque_contact, torque_gravity
 
-
 def get_torque_contact_list(para, ft_cur_list):
     torque_contact_list = []
     torque_estimate_list = []
