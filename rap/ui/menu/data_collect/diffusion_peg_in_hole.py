@@ -68,10 +68,13 @@ class DiffusionPegInHoleWidget(QDialog):
         self.btn_initial_position = QPushButton("Initial Position")
         self.btn_random_position = QPushButton("Random Position")
         self.btn_run_assemble = QPushButton("Run Assemble")
+        self.btn_stop_assemble = QPushButton("Stop Assemble")
 
         self.btn_initial_position.clicked.connect(self.on_initial_position)
         self.btn_random_position.clicked.connect(self.on_random_position)
         self.btn_run_assemble.clicked.connect(self.on_run_assemble)
+
+        self.btn_stop_assemble.clicked.connect(self.on_stop_assemble)
 
 
         # self.ctrl_layout = QHBoxLayout()
@@ -94,6 +97,7 @@ class DiffusionPegInHoleWidget(QDialog):
         self.ctrl_layout.addWidget(self.btn_initial_position, 0, 1)
         self.ctrl_layout.addWidget(self.btn_random_position, 0, 2)
         self.ctrl_layout.addWidget(self.btn_run_assemble, 0, 3)
+        self.ctrl_layout.addWidget(self.btn_stop_assemble, 0, 4)
 
         self.ctrl_layout.addWidget(self.label_cam_state, 1, 0)
         self.ctrl_layout.addWidget(self.btn_start, 1, 1)
@@ -131,16 +135,25 @@ class DiffusionPegInHoleWidget(QDialog):
         print("on_initial_position")
         self.peg_in_hole_ctrl.timer.stop()
 
+        self.up_ctrl.connect_widget.apply_Rot( np.array([0.4776, 0.3969, 0.2, 0, 0, 0]) )
+
     def on_random_position(self):
         print("on_random_position")
         self.peg_in_hole_ctrl.timer.stop()
 
+        self.up_ctrl.connect_widget.apply_Rot(np.array([0.4500, 0.3969, 0.2, 0, 0, 0]))
+
     def on_run_assemble(self):
         print("on_run_assemble")
-        self.peg_in_hole_ctrl.x_r = self.up_ctrl.connect_widget.get_tgt_xyz_rot().copy()
 
+        self.peg_in_hole_ctrl.assemble_stage_flage = 0
+
+        self.peg_in_hole_ctrl.x_r = self.up_ctrl.connect_widget.get_tgt_xyz_rot().copy()
         self.peg_in_hole_ctrl.timer.start(int(self.peg_in_hole_ctrl.dt*1000))
 
+    def on_stop_assemble(self):
+        print("on stop assemble")
+        self.peg_in_hole_ctrl.timer.stop()
 
     def on_save(self):
         self.on_stop()
