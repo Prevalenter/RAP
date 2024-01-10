@@ -40,6 +40,7 @@ class MainWidget(QWidget):
             print( para_file_root, fn )
             self.para_magager[fn.split('.')[0]] = ParaSetWidget(path=para_file_root+fn)
 
+
         self.dev_id_list = ['147122075207', '147322070524']
         self.sing_cam_list = []
         for i in range( len(self.dev_id_list ) ):

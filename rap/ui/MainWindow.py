@@ -47,12 +47,12 @@ class FrmMain(qt.QMainWindow):
         self.menuBar().addMenu(self.menu_data)
         self.menuBar().addMenu(self.menu_monitor)
 
-        # self.menu_set = qt.QMenu('Setting')
-        # # print(self.main_widget.para_magager)
-        # for k in self.main_widget.para_magager:
-        #     self.menu_set.addAction(create_action(self, f'{k} Set',
-        #                                            slot=self.on_setting(k)))
-        # self.menuBar().addMenu(self.menu_set)
+        self.menu_set = qt.QMenu('Setting')
+        # print(self.main_widget.para_magager)
+        for k in self.main_widget.para_magager:
+            self.menu_set.addAction(create_action(self, f'{k} Set',
+                                                   slot=self.on_setting(k)))
+        self.menuBar().addMenu(self.menu_set)
 
     def on_setting(self, k):
         # print('on setting')

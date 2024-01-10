@@ -64,21 +64,31 @@ class DiffusionPegInHoleWidget(QDialog):
         self.label_cam_state = QLabel("")
 
         self.label_ctrl_state = QLabel("Control: ")
+        self.peg_in_hole_ctrl.set_label_ctrl_state(self.label_ctrl_state)
 
         self.btn_initial_position = QPushButton("Initial Position")
         self.btn_random_position = QPushButton("Random Position")
         self.btn_run_assemble = QPushButton("Run Assemble")
         self.btn_stop_assemble = QPushButton("Stop Assemble")
+        self.btn_out_hole = QPushButton("out the hole")
+
 
         self.btn_initial_position.clicked.connect(self.on_initial_position)
         self.btn_random_position.clicked.connect(self.on_random_position)
         self.btn_run_assemble.clicked.connect(self.on_run_assemble)
-
         self.btn_stop_assemble.clicked.connect(self.on_stop_assemble)
-
+        self.btn_out_hole.clicked.connect(self.on_out_hole)
 
         # self.ctrl_layout = QHBoxLayout()
         self.ctrl_layout = QGridLayout()
+
+        self.ctrl_layout.addWidget(self.label_ctrl_state, 0, 0)
+        self.ctrl_layout.addWidget(self.btn_initial_position, 0, 1)
+        self.ctrl_layout.addWidget(self.btn_random_position, 0, 2)
+        self.ctrl_layout.addWidget(self.btn_run_assemble, 0, 3)
+        self.ctrl_layout.addWidget(self.btn_stop_assemble, 0, 4)
+        self.ctrl_layout.addWidget(self.btn_out_hole, 0, 5)
+
         self.btn_start = QPushButton("Start")
         self.btn_stop = QPushButton("Stop")
         self.btn_clear = QPushButton("Clear")
@@ -89,15 +99,13 @@ class DiffusionPegInHoleWidget(QDialog):
         self.btn_clear.clicked.connect(self.on_clear)
         self.btn_save.clicked.connect(self.on_save)
 
+
         # self.ctrl_layout.addWidget(self.label_state)
         # self.ctrl_layout.addWidget(self.btn_start)
         # self.ctrl_layout.addWidget(self.btn_stop)
         # self.ctrl_layout.addWidget(self.btn_clear)
         # self.ctrl_layout.addWidget(self.btn_save)
-        self.ctrl_layout.addWidget(self.btn_initial_position, 0, 1)
-        self.ctrl_layout.addWidget(self.btn_random_position, 0, 2)
-        self.ctrl_layout.addWidget(self.btn_run_assemble, 0, 3)
-        self.ctrl_layout.addWidget(self.btn_stop_assemble, 0, 4)
+
 
         self.ctrl_layout.addWidget(self.label_cam_state, 1, 0)
         self.ctrl_layout.addWidget(self.btn_start, 1, 1)
@@ -131,6 +139,7 @@ class DiffusionPegInHoleWidget(QDialog):
         self.data_timer.timeout.connect(self.get_step_data)
           # every 10,000 milliseconds
 
+
     def on_initial_position(self):
         print("on_initial_position")
         self.peg_in_hole_ctrl.timer.stop()
@@ -141,7 +150,19 @@ class DiffusionPegInHoleWidget(QDialog):
         print("on_random_position")
         self.peg_in_hole_ctrl.timer.stop()
 
-        self.up_ctrl.connect_widget.apply_Rot(np.array([0.4500, 0.3969, 0.2, 0, 0, 0]))
+        # self.up_ctrl.connect_widget.apply_Rot(np.array([0.4500, 0.3969, 0.2, 0, 0, 0]))
+
+        r_min, r_max = 0.007, 0.015
+        r = np.random.rand(1) * (r_max - r_min) + r_min
+        angle = np.random.rand(1) * 2 * np.pi
+
+        x = r * np.cos(angle) + self.peg_in_hole_ctrl.xy_tgt[0]
+        y = r * np.sin(angle) + self.peg_in_hole_ctrl.xy_tgt[1]
+
+        random_pos = np.array([x, y, 0.18, 0, 0, 0]).astype(np.float64)
+        # print(random_pos)
+
+        self.up_ctrl.connect_widget.apply_Rot( random_pos )
 
     def on_run_assemble(self):
         print("on_run_assemble")
@@ -151,9 +172,33 @@ class DiffusionPegInHoleWidget(QDialog):
         self.peg_in_hole_ctrl.x_r = self.up_ctrl.connect_widget.get_tgt_xyz_rot().copy()
         self.peg_in_hole_ctrl.timer.start(int(self.peg_in_hole_ctrl.dt*1000))
 
+        self.label_ctrl_state.setText(f"Control: stage {self.peg_in_hole_ctrl.assemble_stage_flage}")
+
     def on_stop_assemble(self):
         print("on stop assemble")
         self.peg_in_hole_ctrl.timer.stop()
+
+        x_r = self.up_ctrl.connect_widget.get_tgt_xyz_rot().copy()
+        self.up_ctrl.connect_widget.apply_Rot(x_r)
+
+        self.label_ctrl_state.setText(f"Control: stop")
+
+    def out_hole(self):
+        x_r = self.up_ctrl.connect_widget.get_tgt_xyz_rot().copy()
+        x_r[2] += 0.01
+        self.up_ctrl.connect_widget.apply_Rot(x_r)
+        if x_r[2] > 0.2:
+            self.out_hole_timer.stop()
+            self.label_ctrl_state.setText(f"Control: ")
+
+    def on_out_hole(self):
+        self.peg_in_hole_ctrl.timer.stop()
+        self.out_hole_timer = QTimer()
+        self.out_hole_timer.timeout.connect( self.out_hole )
+        self.out_hole_timer.start(1000)
+
+        self.label_ctrl_state.setText(f"Control: out hole")
+
 
     def on_save(self):
         self.on_stop()
@@ -190,8 +235,6 @@ class DiffusionPegInHoleWidget(QDialog):
 
         df_xyz = pd.DataFrame(xyz)
         df_xyz.to_csv(exp_dir.joinpath("xyz.csv"), header=False, index=False)
-
-
 
 
     def on_start(self):
@@ -284,9 +327,23 @@ class MyWindow(QWidget):
             self.state_widget.update_tgt()
 
 if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+
+    # r_min, r_max = 0.01, 0.03
+    # r = np.random.rand(5000)*(r_max-r_min) + r_min
+    # angle = np.random.rand(5000)*2*np.pi
+    #
+    # x = r * np.cos(angle)
+    # y = r * np.sin(angle)
+
+    # print(angle)
+    # plt.scatter(x, y)
+    # plt.show()
+
+
+
     app = QApplication(sys.argv)
     w = MyWindow()
-    # w = ConnectWidget()
     w.show()
     app.exec_()
 

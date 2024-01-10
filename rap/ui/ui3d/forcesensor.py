@@ -44,23 +44,29 @@ class ForceSensor:
             if np.linalg.norm(self.ft_contact[3:])<0.005:
                 self.ft_contact[3:] = 0
 
-    def render(self, gl_ctrl):
+            self.set_ft_world()
+
+    def set_ft_world(self):
         # T = self.calucu()
         T = to_world_axis(self.pos_cur[:3], self.pos_cur[3:])
         begin = T @ self.axis_base
-        begin = begin[:3, 0]
+        self.begin = begin[:3, 0]
 
         end = T @ np.array(list(self.ft_contact[:3]) + [1])[:, None]
-        end = end[:3, 0]
-        self.force_contact_world[:3] = end - begin
+        self.end = end[:3, 0]
+        print(end.shape, begin.shape, self.force_contact_world[:3].shape)
+        self.force_contact_world[:3] = self.end - self.begin
 
         # self.force_contact_world[3:] = self.ft_contact[3:]
         self.force_contact_world[3] = self.ft_contact[4]
         self.force_contact_world[4] = self.ft_contact[3]
         self.force_contact_world[5] = -self.ft_contact[5]
 
+    def render(self, gl_ctrl):
+        self.set_ft_world()
+
         gl_ctrl.color.value = gl_ctrl.new_color
-        gl_ctrl.vbo_ft = gl_ctrl.ctx.buffer(np.array([begin, end], dtype=np.float32))
+        gl_ctrl.vbo_ft = gl_ctrl.ctx.buffer(np.array([self.begin, self.end], dtype=np.float32))
         gl_ctrl.vao_ft = gl_ctrl.ctx.simple_vertex_array(gl_ctrl.prog, gl_ctrl.vbo_ft, 'in_position')
 
         # Render reigon loop
