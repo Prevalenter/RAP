@@ -33,9 +33,10 @@ class PegInHoleContral:
         if self.up_ctrl is not None and is_contraol:
             force_contact_world = self.up_ctrl.ft.force_contact_world.copy()
             force_contact_norm = np.linalg.norm(force_contact_world[:3])
+            torque_norm = np.linalg.norm(force_contact_world[3:])
             # force_contact_norm = np.linalg.norm(force_contact_world[:3])
 
-            if force_contact_norm>40:
+            if force_contact_norm>40 or torque_norm>0.5:
                 return
 
             # if force_contact_norm!=0:
@@ -78,14 +79,14 @@ class PegInHoleContral:
                 if self.assemble_stage_flage==2: # to the hole
                     dx = np.zeros(6)
 
-                    dx[:2] = -(5e-5)*np.sign(self.x_r[:2]-self.xy_tgt[:2])
+                    dx[:2] = -(2e-5)*np.sign(self.x_r[:2]-self.xy_tgt[:2])
 
                     # keep the force in z axis constant
                     # dx[2] = 5e-6 * np.sign(error[2])
                     if np.abs(error[2])>0.5:
                         dx[2] = 5e-6 * np.sign(error[2])
 
-                    if self.x_r[2] < 0.172:
+                    if self.x_r[2] < 0.172 or force_contact_norm<2:
                         self.assemble_stage_flage = 3
                         self.label_ctrl_state.setText(f"Control: stage 3")
 
@@ -95,8 +96,17 @@ class PegInHoleContral:
                         dx[0] = 2e-6 * np.sign(error[0])
                     if np.abs(error[0])>0.5:
                         dx[1] = 2e-6 * np.sign(error[1])
+
                     if np.abs(error[2])>0.5:
-                        dx[2] = 5e-6 * np.sign(error[2])
+                        dx[2] = 5e-5 * np.sign(error[2])
+
+                    if np.abs(error[3]) > 0.2:
+                        dx[3] = 1e-4 * np.sign(error[3])
+
+                    if np.abs(error[4]) > 0.2:
+                        dx[4] = 1e-4 * np.sign(error[4])
+
+
 
                     if self.x_r[2] < 0.120:
                         self.assemble_stage_flage = 4

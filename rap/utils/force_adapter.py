@@ -29,14 +29,15 @@ class DragForceAdapter:
 
                 dx = np.array([0, 0, 0, 0, 0, 0]).astype(np.float32)
 
-                dx[:3] = np.clip(force_contact_world[:3], -10, 10)*0.01
+                dx[:3] = 0.5*np.clip(force_contact_world[:3], -10, 10)*0.01
 
-                torque_map = np.zeros(3)
-                torque_map[0] = force_contact_world[4]
-                torque_map[1] = force_contact_world[3]
-                torque_map[2] = -force_contact_world[5]
-
-                dx[3:] = torque_map
+                dx[3:] = 0.1*force_contact_world[3:]
+                # torque_map = np.zeros(3)
+                # torque_map[0] = force_contact_world[4]
+                # torque_map[1] = force_contact_world[3]
+                # torque_map[2] = -force_contact_world[5]
+                #
+                # dx[3:] = torque_map
 
                 xyz_rot_new = xyz_rot_cur.copy()
                 xyz_rot_new += dx
@@ -125,19 +126,6 @@ class PositionForceAdapter:
         self.error_sum = np.array([0, 0, 0, 0, 0, 0]).astype(np.float32)
         self.error_last = np.array([0, 0, 0, 0, 0, 0])
 
-        # self.ddx_r = np.array([0, 0, 0, 0, 0, 0])
-        # self.dx_r = np.array([0, 0, 0, 0, 0, 0])
-        # self.x_r = np.array([0, 0, 0, 0, 0, 0])
-        #
-        # self.ddx = np.array([0, 0, 0, 0, 0, 0])
-        # self.dx = np.array([0, 0, 0, 0, 0, 0])
-        #
-        # self.F_d = np.array([0, 0, 0, 0, 0, 0])
-        #
-        # self.pos_cur = np.zeros(6)
-        # self.pos_cur_last = np.zeros(6)
-        # self.pos_cur_last2 = np.zeros(6)
-
     # def timer_step(self):
     def run(self):
         # print('PositionForceAdapter run')
@@ -145,60 +133,33 @@ class PositionForceAdapter:
             print('PositionForceAdapter')
 
             force_contact_world = self.up_ctrl.ft.force_contact_world.copy()
-            # force_contact_world = self.reaction_foce(self.up_ctrl.xyz_cur)
-            force_contact_norm = np.linalg.norm(force_contact_world[:3])
 
-            # pos = self.up_ctrl.xyz_cur
-
-            #
-            # self.dx = (self.pos_cur-self.pos_cur_last)/self.dt
-            # dx_last = (self.pos_cur_last-self.pos_cur_last2)/self.dt
-            # self.ddx = (self.dx-dx_last)/self.dt
-
-            # self.dx
-
-            # if force_contact_norm!=0:
             if True:
                 print('-'*60)
                 print(force_contact_world)
 
-                # only reaction to the force in z positive
-                if force_contact_world[2]<1:
-                    force_contact_world[2] = 0
+                error = np.array(force_contact_world - self.F_r).astype(np.float64)
+
+                print("error: ", error)
+
+                dx = np.zeros(6)
+
+                # reaction to z axis
+                # if force_contact_norm==0:
+                #     dx = np.array([0, 0, -1e-4, 0, 0, 0])
+                # # contact
                 # else:
-                #     force_contact_world[2] = force_contact_world[2] - 1
+                #     dx = np.zeros(6)
+                #     dx[2] = 5e-6*np.sign(error[2])
 
-                error = force_contact_world - self.F_r
-                self.error_sum += error
-                # dx = self.P*(error) + self.I*self.error_sum - self.D*(error-self.error_last)
+                if np.abs(error[3].copy())>0.2:
+                    dx[3] = 5e-3*np.sign(error[3])
 
-                # no contact
-                if force_contact_norm==0:
-                    dx = np.array([0, 0, -1e-4, 0, 0, 0])
-                # contact
-                else:
-                    dx = np.zeros(6)
-                    dx[2] = 5e-6*np.sign(error[2])
+                if np.abs(error[4].copy())>0.2:
+                    dx[4] = 5e-3*np.sign(error[4])
 
-
-                if np.abs(error[2])<1 and self.x_r[1]<0.153:
-                    dx[1] = (5e-5)
-
-                self.error_last = error
-
-                #
-                # F = force_contact_world
-                #
-                # M = self.up_ctrl.para_magager['Compliance'].para["MBK"]['M']
-                # B = self.up_ctrl.para_magager['Compliance'].para["MBK"]['B']
-                # K = self.up_ctrl.para_magager['Compliance'].para["MBK"]['K']
-                #
-                # dx = -( F - self.F_d - M * (self.ddx_r-self.ddx) - B * (self.dx_r - self.dx) )/K
-                # dx = -dx
-                #
-                # xyz_rot_new = self.x_r.copy()
                 self.x_r += dx
-                #
+
                 self.up_ctrl.connect_widget.apply_Rot(self.x_r)
             else:
                 self.up_ctrl.connect_widget.apply_Rot(self.x_r)
