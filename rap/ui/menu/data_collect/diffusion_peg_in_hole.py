@@ -16,6 +16,8 @@ from ui.base.state import StateWidget
 from utils.realsense import SingleReansense
 
 from ui.menu.data_collect.peg_in_hole_control import PegInHoleContral
+from ui.menu.data_collect.auto_sample import AutoSampleThread
+
 
 import cv2
 
@@ -38,8 +40,10 @@ class DiffusionPegInHoleWidget(QDialog):
     def __init__(self, single_cam_list, up_ctrl=None):
         super().__init__()
         self.up_ctrl = up_ctrl
+        self.auto_sample = AutoSampleThread(self)
 
         self.step_index = 0
+        self.save_mode = 'manual'
 
         self.single_cam_list = single_cam_list
 
@@ -53,7 +57,8 @@ class DiffusionPegInHoleWidget(QDialog):
             "idx": 0,
             "img": [],
             "force_torque": [],
-            "xyz_rot": []
+            "xyz_rot": [],
+            'assemble_stage':[]
         }
 
     def ui_init(self):
@@ -99,13 +104,11 @@ class DiffusionPegInHoleWidget(QDialog):
         self.btn_clear.clicked.connect(self.on_clear)
         self.btn_save.clicked.connect(self.on_save)
 
-
         # self.ctrl_layout.addWidget(self.label_state)
         # self.ctrl_layout.addWidget(self.btn_start)
         # self.ctrl_layout.addWidget(self.btn_stop)
         # self.ctrl_layout.addWidget(self.btn_clear)
         # self.ctrl_layout.addWidget(self.btn_save)
-
 
         self.ctrl_layout.addWidget(self.label_cam_state, 1, 0)
         self.ctrl_layout.addWidget(self.btn_start, 1, 1)
@@ -113,6 +116,17 @@ class DiffusionPegInHoleWidget(QDialog):
         self.ctrl_layout.addWidget(self.btn_clear, 1, 3)
         self.ctrl_layout.addWidget(self.btn_save, 1, 4)
 
+
+        self.sample_process = QLabel("")
+        self.btn_auto_start = QPushButton("Auto Start")
+        self.btn_auto_stop = QPushButton("Auto Stop")
+        self.label_ctrl_auto = QLabel("Auto: ")
+        self.ctrl_layout.addWidget(self.label_ctrl_auto, 2, 0)
+        # self.ctrl_layout.addWidget(self.sample_process, 2, 1)
+        self.ctrl_layout.addWidget(self.btn_auto_start, 2, 1)
+        self.ctrl_layout.addWidget(self.btn_auto_stop, 2, 2)
+        self.btn_auto_start.clicked.connect(self.on_auto_start)
+        self.btn_auto_stop.clicked.connect(self.on_auto_stop)
 
         self.state_widget = StateWidget()
 
@@ -139,6 +153,21 @@ class DiffusionPegInHoleWidget(QDialog):
         self.data_timer.timeout.connect(self.get_step_data)
           # every 10,000 milliseconds
 
+
+    def on_auto_start(self):
+        self.save_mode = 'auto'
+        self.auto_save_path = '0001'
+
+        self.auto_sample_flag = True
+        self.auto_sample.start()
+        # self.label_ctrl_auto.setText(f"Auto:    0/200")
+
+    def on_auto_stop(self):
+        self.save_mode = 'manual'
+
+        self.auto_sample_flag = False
+        # self.auto_sample.stop()
+        # self.label_ctrl_auto.setText(f"Auto:    0/200")
 
     def on_initial_position(self):
         print("on_initial_position")
@@ -199,31 +228,35 @@ class DiffusionPegInHoleWidget(QDialog):
 
         self.label_ctrl_state.setText(f"Control: out hole")
 
-
-    def on_save(self):
+    # img save as png, zarr
+    def on_save(self, img_save_as='png', exp_dir=None):
         self.on_stop()
 
-        '''CREATE DIR'''
-        timestr = str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M'))
-        exp_dir = Path('../data/diffusion_peg_in_hole/')
-        exp_dir.mkdir(exist_ok=True)
-        # exp_dir = exp_dir.joinpath(args.model)
-        # exp_dir.mkdir(exist_ok=True)
-        exp_dir = exp_dir.joinpath(timestr)
-        exp_dir.mkdir(exist_ok=True)
+        if exp_dir is None:
+            '''CREATE DIR'''
+            timestr = str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M'))
+            exp_dir = Path('../data/diffusion_peg_in_hole/')
+            exp_dir.mkdir(exist_ok=True)
+            # exp_dir = exp_dir.joinpath(args.model)
+            # exp_dir.mkdir(exist_ok=True)
+            exp_dir = exp_dir.joinpath(timestr)
+            exp_dir.mkdir(exist_ok=True)
 
-        exp_img_dir = exp_dir.joinpath('img')
-        exp_img_dir.mkdir(exist_ok=True)
+            exp_img_dir = exp_dir.joinpath('img')
+            exp_img_dir.mkdir(exist_ok=True)
+
 
         print("save", exp_dir)
 
         img_data = np.array(self.data['img'])
-        # np.save(exp_dir.joinpath("rgb.npy"), img_data[:, :, :, :, :3].astype(np.uint8))
-        # np.save(exp_dir.joinpath("rgbd.npy"), img_data)
-        t = time.time()
-        np2img(img_data, exp_dir)
-        print('save img using:', time.time()-t)
 
+        t = time.time()
+        if img_save_as=='png':
+            np2img(img_data, exp_dir)
+        else:
+            # np2zarr()
+            pass
+        print('save img using:', time.time()-t)
 
         # save ft and xyz data
         ft = np.array(self.data['force_torque']).astype(np.float32)
@@ -262,6 +295,8 @@ class DiffusionPegInHoleWidget(QDialog):
             self.data["img"].append( np.array([ cam.th.single_cam.rgbd for cam in self.cam_list]) )
             self.data['force_torque'].append(np.array(self.up_ctrl.ft.force_contact_world))
             self.data['xyz_rot'].append(np.array(self.up_ctrl.xyz_cur))
+            # self.peg_in_hole_ctrl.assemble_stage_flage
+            self.data['assemble_stage'].append(self.peg_in_hole_ctrl.assemble_stage_flage)
         else:
             self.data["img"].append( np.array([ cam.th.single_cam.rgbd for cam in self.cam_list]) )
             self.data['force_torque'].append( np.zeros(6) )

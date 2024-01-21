@@ -54,7 +54,7 @@ class ForceSensor:
 
         end = T @ np.array(list(self.ft_contact[:3]) + [1])[:, None]
         self.end = end[:3, 0]
-        print(end.shape, begin.shape, self.force_contact_world[:3].shape)
+        # print(end.shape, begin.shape, self.force_contact_world[:3].shape)
         self.force_contact_world[:3] = self.end - self.begin
 
         # self.force_contact_world[3:] = self.ft_contact[3:]

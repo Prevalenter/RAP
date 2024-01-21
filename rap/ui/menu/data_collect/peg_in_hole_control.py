@@ -6,6 +6,7 @@ class PegInHoleContral:
     def __init__(self, up_ctrl=None, dt=0.05):
         self.up_ctrl = up_ctrl
         self.dt = dt
+        self.assemble_stage_flage = 0
 
         if up_ctrl is not None:
             self.timer = QTimer(self.up_ctrl)
@@ -21,6 +22,8 @@ class PegInHoleContral:
 
         self.error_sum = np.array([0, 0, 0, 0, 0, 0]).astype(np.float32)
         self.error_last = np.array([0, 0, 0, 0, 0, 0])
+
+
 
     def set_label_ctrl_state(self, label_ctrl_state):
         self.label_ctrl_state = label_ctrl_state
@@ -106,24 +109,9 @@ class PegInHoleContral:
                     if np.abs(error[4]) > 0.2:
                         dx[4] = 1e-4 * np.sign(error[4])
 
-
-
                     if self.x_r[2] < 0.120:
                         self.assemble_stage_flage = 4
                         self.label_ctrl_state.setText(f"Control: stage 4")
-
-                # if force_contact_norm==0:
-                #     dx = np.array([0, 0, -1e-4, 0, 0, 0])
-                # # contact
-                # else:
-                #     dx = np.zeros(6)
-                #     if self.x_r[2] > 0.172:
-                #         dx[2] = 5e-6*np.sign(error[2])
-                #     else:
-                #         dx[2] = 5e-5*np.sign(error[2])
-                #
-                # if np.abs(error[2])<1 and self.x_r[0]<0.4776:
-                #     dx[0] = (5e-5)
 
                 self.error_last = error
 
