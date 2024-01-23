@@ -15,7 +15,7 @@ from ui.base.vedio import VedioWidget
 from ui.base.state import StateWidget
 from utils.realsense import SingleReansense
 
-from ui.menu.data_collect.peg_in_hole_control import PegInHoleContral
+from ui.menu.data_collect.peg_in_hole_control import PegInHoleControl
 from ui.menu.data_collect.auto_sample import AutoSampleThread
 
 
@@ -47,7 +47,7 @@ class DiffusionPegInHoleWidget(QDialog):
 
         self.single_cam_list = single_cam_list
 
-        self.peg_in_hole_ctrl = PegInHoleContral(up_ctrl=up_ctrl)
+        self.peg_in_hole_ctrl = PegInHoleControl(up_ctrl=up_ctrl)
 
         self.data_init()
         self.ui_init()
@@ -127,6 +127,12 @@ class DiffusionPegInHoleWidget(QDialog):
         self.ctrl_layout.addWidget(self.btn_auto_stop, 2, 2)
         self.btn_auto_start.clicked.connect(self.on_auto_start)
         self.btn_auto_stop.clicked.connect(self.on_auto_stop)
+
+        self.auto_sample.start_run.connect(self.on_run_assemble)
+        self.auto_sample.stop_run.connect(self.on_stop_assemble)
+
+        self.auto_sample.start_run.connect(self.on_start)
+        self.auto_sample.stop_run.connect(self.on_stop)
 
         self.state_widget = StateWidget()
 

@@ -27,14 +27,14 @@ class Client:
         """ 向连接中接受数据 """
         while True:
             try:
-                # if self.is_writing: continue
-                t = time.time()
+                # if self.is_writfing: continue
+                # t = time.time()
                 data = self._sock.recv(1024).decode()
                 # print(len(data))
-                logging.info("[R %s]<< %s", currentThread().getName(), data)
+                # logging.info("[R %s]<< %s", currentThread().getName(), data)
                 if self.parent!=None: 
                     self.parent.set_msg_rcv(data)
-                print('msg recv using: ', time.time()-t)
+                # print('msg recv using: ', time.time()-t)
                 # print('set_msg_rcv down')
                 # time.sleep(0.1)
 

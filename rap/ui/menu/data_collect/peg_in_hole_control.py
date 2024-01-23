@@ -2,7 +2,7 @@ import numpy as np
 
 from PyQt5.QtCore import QTimer
 
-class PegInHoleContral:
+class PegInHoleControl:
     def __init__(self, up_ctrl=None, dt=0.05):
         self.up_ctrl = up_ctrl
         self.dt = dt
@@ -30,7 +30,7 @@ class PegInHoleContral:
 
     # def timer_step(self):
     def run(self):
-        print('PegInHoleContral run')
+        print('PegInHoleControl run')
 
         is_contraol = True
         if self.up_ctrl is not None and is_contraol:
@@ -66,7 +66,7 @@ class PegInHoleContral:
                 # no contact
                 if self.assemble_stage_flage==0:
                     if force_contact_norm==0: # no conatact
-                        dx = np.array([0, 0, -1e-4, 0, 0, 0])
+                        dx = np.array([0, 0, -5e-5, 0, 0, 0])
                     else:
                         self.assemble_stage_flage = 1
                         self.label_ctrl_state.setText(f"Control: stage 1")
@@ -82,7 +82,7 @@ class PegInHoleContral:
                 if self.assemble_stage_flage==2: # to the hole
                     dx = np.zeros(6)
 
-                    dx[:2] = -(2e-5)*np.sign(self.x_r[:2]-self.xy_tgt[:2])
+                    dx[:2] = -(5e-5)*np.sign(self.x_r[:2]-self.xy_tgt[:2])
 
                     # keep the force in z axis constant
                     # dx[2] = 5e-6 * np.sign(error[2])

@@ -96,6 +96,7 @@ class SingleReansense:
 
         depth_image, color_image = self.get_rgbd()
         # print(depth_image.shape, color_image.shape)
+
         self.rgbd = np.concatenate([color_image, depth_image[:, :, None]], axis=2)
 
         depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)

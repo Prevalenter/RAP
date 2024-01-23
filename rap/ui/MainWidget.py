@@ -144,7 +144,7 @@ class MainWidget(QWidget):
             # force_contact_world
             self.state_widget.update(self.angle_cur, self.xyz_cur, self.ft.ft_sensor, self.ft.force_contact_world)
 
-        print('UI update down', tgt, cur, sent_tgt)
+        # print('UI update down', tgt, cur, sent_tgt)
         # self.plot2d.update()
 
 

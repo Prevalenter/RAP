@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 
 import time
@@ -34,7 +35,7 @@ class CamThread(QThread):
             t = time.time()
             img = self.single_cam.get_frame()
             # self.img = img
-
+            img[:, :, :3] = cv2.cvtColor(img[:, :, :3], cv2.COLOR_BGR2RGB)
             h, w, c = img.shape
             convertToQtFormat = QImage(img.data, w, h, QImage.Format_RGB888)
             convertToQtFormat = convertToQtFormat.scaled(640, 480//2, Qt.KeepAspectRatio)
@@ -91,6 +92,7 @@ class VedioWidget(QDialog):
 
     @pyqtSlot(QImage)
     def setImage(self, image):
+
         self.label.setPixmap(QPixmap.fromImage(image))
 
 class MyWindow123(QWidget):
