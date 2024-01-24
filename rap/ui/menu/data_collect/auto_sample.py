@@ -19,6 +19,7 @@ class AutoSampleThread(QThread):
         self.parent = parent
 
     def run(self):
+        print('AutoSampleThread run')
 
         # save the data
         root_dir = Path('../data/diffusion_peg_in_hole/auto')
@@ -87,7 +88,7 @@ class AutoSampleThread(QThread):
 
                 # save ft and xyz data
                 ft = np.array(self.parent.data['force_torque']).astype(np.float32)
-                xyz = np.array(self.parent.data['xyz_rot']).astype(np.float32)
+                xyz = np.array(self.parent.data['xyz_rot_real']).astype(np.float32)
                 df_ft = pd.DataFrame(ft)
                 df_ft.to_csv(exp_dir.joinpath("ft.csv"), header=False, index=False)
 

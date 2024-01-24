@@ -57,7 +57,8 @@ class DiffusionPegInHoleWidget(QDialog):
             "idx": 0,
             "img": [],
             "force_torque": [],
-            "xyz_rot": [],
+            "xyz_rot_real": [],
+            "xyz_rot_tgt": [],
             'assemble_stage':[]
         }
 
@@ -161,9 +162,7 @@ class DiffusionPegInHoleWidget(QDialog):
 
 
     def on_auto_start(self):
-        self.save_mode = 'auto'
-        self.auto_save_path = '0001'
-
+        print('on_auto_start')
         self.auto_sample_flag = True
         self.auto_sample.start()
         # self.label_ctrl_auto.setText(f"Auto:    0/200")
@@ -266,7 +265,7 @@ class DiffusionPegInHoleWidget(QDialog):
 
         # save ft and xyz data
         ft = np.array(self.data['force_torque']).astype(np.float32)
-        xyz = np.array(self.data['xyz_rot']).astype(np.float32)
+        xyz = np.array(self.data['xyz_rot_real']).astype(np.float32)
         # print(ft.shape, xyz.shape)
         df_ft = pd.DataFrame(ft)
         # print(ft)
@@ -300,13 +299,16 @@ class DiffusionPegInHoleWidget(QDialog):
         if self.up_ctrl is not None:
             self.data["img"].append( np.array([ cam.th.single_cam.rgbd for cam in self.cam_list]) )
             self.data['force_torque'].append(np.array(self.up_ctrl.ft.force_contact_world))
-            self.data['xyz_rot'].append(np.array(self.up_ctrl.xyz_cur))
+            self.data['xyz_rot_real'].append(np.array(self.up_ctrl.xyz_cur))
+
+            self.data['xyz_rot_tgt'].append(np.array(self.peg_in_hole_ctrl.x_r))
+
             # self.peg_in_hole_ctrl.assemble_stage_flage
             self.data['assemble_stage'].append(self.peg_in_hole_ctrl.assemble_stage_flage)
         else:
             self.data["img"].append( np.array([ cam.th.single_cam.rgbd for cam in self.cam_list]) )
             self.data['force_torque'].append( np.zeros(6) )
-            self.data['xyz_rot'].append( np.zeros(6) )
+            self.data['xyz_rot_real'].append( np.zeros(6) )
 
         # print(self.data['img'][-1].shape)
 

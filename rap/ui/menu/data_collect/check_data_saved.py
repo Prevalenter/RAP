@@ -8,14 +8,28 @@ from utils import zarr_io
 
 if __name__ == '__main__':
 
-    data = zarr_io.load_zarr_dict('../../../data/diffusion_peg_in_hole/auto/000/data.zarr.zip')
+    data = zarr_io.load_zarr_dict('../../../data/diffusion_peg_in_hole/auto/001/data.zarr.zip')
     assemble_stage = data['assemble_stage']
     mask = assemble_stage==2
     print(data.keys())
     imgs = data['img']
     force_torque = data['force_torque']
-    xyz_rot = data['xyz_rot']
-    print(imgs.shape, assemble_stage.shape, force_torque.shape)
+    xyz_rot_real = data['xyz_rot_real']
+    xyz_rot_tgt = data['xyz_rot_tgt']
+    print(imgs.shape, assemble_stage.shape, force_torque.shape,
+          xyz_rot_real.shape, xyz_rot_tgt.shape)
+
+    for i in range(6):
+        plt.subplot(6, 1, 1+i)
+        plt.plot(xyz_rot_real[:, i], label='real')
+        plt.plot(xyz_rot_tgt[:, i], label='tgt')
+    plt.legend()
+    plt.show()
+
+
+
+    breakpoint()
+
 
     imgs_show = np.concatenate([imgs[:, 0, :, :, :3], imgs[:, 1, :, :, :3]], axis=2)
     print(imgs_show.shape)
@@ -39,8 +53,8 @@ if __name__ == '__main__':
 
         for i in range(6):
             plt.subplot(12, 2, 12+1+i*2)
-            plt.plot(xyz_rot[:, i], c='k')
-            plt.plot([idx, idx], [xyz_rot[:, i].min(), xyz_rot[:, i].max()], c='r')
+            plt.plot(xyz_rot_real[:, i], c='k')
+            plt.plot([idx, idx], [xyz_rot_real[:, i].min(), xyz_rot_real[:, i].max()], c='r')
             if i==0:
                 plt.title('XYZ-Rot')
 
