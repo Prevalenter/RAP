@@ -121,13 +121,16 @@ class DiffusionPegInHoleWidget(QDialog):
         self.sample_process = QLabel("")
         self.btn_auto_start = QPushButton("Auto Start")
         self.btn_auto_stop = QPushButton("Auto Stop")
+        self.btn_diffusion_ctrl = QPushButton("DP control")
         self.label_ctrl_auto = QLabel("Auto: ")
         self.ctrl_layout.addWidget(self.label_ctrl_auto, 2, 0)
         # self.ctrl_layout.addWidget(self.sample_process, 2, 1)
         self.ctrl_layout.addWidget(self.btn_auto_start, 2, 1)
         self.ctrl_layout.addWidget(self.btn_auto_stop, 2, 2)
+        self.ctrl_layout.addWidget(self.btn_diffusion_ctrl, 2, 3)
         self.btn_auto_start.clicked.connect(self.on_auto_start)
         self.btn_auto_stop.clicked.connect(self.on_auto_stop)
+        self.btn_diffusion_ctrl.clicked.connect(self.on_diffusion_ctrl)
 
         self.auto_sample.start_run.connect(self.on_run_assemble)
         self.auto_sample.stop_run.connect(self.on_stop_assemble)
@@ -160,6 +163,8 @@ class DiffusionPegInHoleWidget(QDialog):
         self.data_timer.timeout.connect(self.get_step_data)
           # every 10,000 milliseconds
 
+    def on_diffusion_ctrl(self):
+        print('on_diffusion_ctrl')
 
     def on_auto_start(self):
         print('on_auto_start')

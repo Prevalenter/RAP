@@ -8,7 +8,7 @@ from utils import zarr_io
 
 if __name__ == '__main__':
 
-    data = zarr_io.load_zarr_dict('../../../data/diffusion_peg_in_hole/auto/001/data.zarr.zip')
+    data = zarr_io.load_zarr_dict('../../../data/diffusion_peg_in_hole/auto/000/data.zarr.zip')
     assemble_stage = data['assemble_stage']
     mask = assemble_stage==2
     print(data.keys())
