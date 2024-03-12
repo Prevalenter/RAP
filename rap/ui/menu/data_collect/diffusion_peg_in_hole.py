@@ -19,7 +19,11 @@ from ui.menu.data_collect.peg_in_hole_control import PegInHoleControl
 from ui.menu.data_collect.auto_sample import AutoSampleThread
 
 
+from ui.menu.data_collect.peg_in_hole_rl import PegInHoleRL, PegInHoleTrain
+
 import cv2
+
+
 
 # size = 720*16//9, 720
 # duration = 2
@@ -122,15 +126,18 @@ class DiffusionPegInHoleWidget(QDialog):
         self.btn_auto_start = QPushButton("Auto Start")
         self.btn_auto_stop = QPushButton("Auto Stop")
         self.btn_diffusion_ctrl = QPushButton("DP control")
+        self.btn_td3_ctrl = QPushButton("TD3 control")
         self.label_ctrl_auto = QLabel("Auto: ")
         self.ctrl_layout.addWidget(self.label_ctrl_auto, 2, 0)
         # self.ctrl_layout.addWidget(self.sample_process, 2, 1)
         self.ctrl_layout.addWidget(self.btn_auto_start, 2, 1)
         self.ctrl_layout.addWidget(self.btn_auto_stop, 2, 2)
         self.ctrl_layout.addWidget(self.btn_diffusion_ctrl, 2, 3)
+        self.ctrl_layout.addWidget(self.btn_td3_ctrl, 2, 4)
         self.btn_auto_start.clicked.connect(self.on_auto_start)
         self.btn_auto_stop.clicked.connect(self.on_auto_stop)
         self.btn_diffusion_ctrl.clicked.connect(self.on_diffusion_ctrl)
+        self.btn_td3_ctrl.clicked.connect(self.on_td3_ctrl)
 
         self.auto_sample.start_run.connect(self.on_run_assemble)
         self.auto_sample.stop_run.connect(self.on_stop_assemble)
@@ -161,7 +168,28 @@ class DiffusionPegInHoleWidget(QDialog):
 
         self.data_timer = QTimer(self)
         self.data_timer.timeout.connect(self.get_step_data)
-          # every 10,000 milliseconds
+
+        # every 10,000 milliseconds
+
+    def on_td3_ctrl(self):
+        print('on td3 ctrl')
+        self.trainer = PegInHoleTrain(up_ctrl=self.up_ctrl, parent=self)
+        self.trainer.start()
+        # self.env = PegInHoleRL(up_ctrl=self.up_ctrl, parent=self)
+
+
+        # for i in range(10):
+        # self.env.reset()
+
+        # for i in range(1000):
+        #     self.env.step(None)
+
+
+
+        # self.env.timer_stage12.start(100)
+
+
+
 
     def on_diffusion_ctrl(self):
         print('on_diffusion_ctrl')
@@ -199,7 +227,7 @@ class DiffusionPegInHoleWidget(QDialog):
         y = r * np.sin(angle) + self.peg_in_hole_ctrl.xy_tgt[1]
 
         random_pos = np.array([x, y, 0.18, 0, 0, 0]).astype(np.float64)
-        # print(random_pos)
+        print(random_pos)
 
         self.up_ctrl.connect_widget.apply_Rot( random_pos )
 

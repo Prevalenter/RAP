@@ -23,8 +23,6 @@ class PegInHoleControl:
         self.error_sum = np.array([0, 0, 0, 0, 0, 0]).astype(np.float32)
         self.error_last = np.array([0, 0, 0, 0, 0, 0])
 
-
-
     def set_label_ctrl_state(self, label_ctrl_state):
         self.label_ctrl_state = label_ctrl_state
 
