@@ -50,7 +50,7 @@ class Client:
         #     return
 
         # self.is_writing = True
-        logging.info("[W %s]>> %s", currentThread().getName(), msg)
+        # logging.info("[W %s]>> %s", currentThread().getName(), msg)
 
         try:
             self._sock.send(msg.encode())

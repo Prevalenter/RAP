@@ -175,21 +175,6 @@ class DiffusionPegInHoleWidget(QDialog):
         print('on td3 ctrl')
         self.trainer = PegInHoleTrain(up_ctrl=self.up_ctrl, parent=self)
         self.trainer.start()
-        # self.env = PegInHoleRL(up_ctrl=self.up_ctrl, parent=self)
-
-
-        # for i in range(10):
-        # self.env.reset()
-
-        # for i in range(1000):
-        #     self.env.step(None)
-
-
-
-        # self.env.timer_stage12.start(100)
-
-
-
 
     def on_diffusion_ctrl(self):
         print('on_diffusion_ctrl')
@@ -208,13 +193,13 @@ class DiffusionPegInHoleWidget(QDialog):
         # self.label_ctrl_auto.setText(f"Auto:    0/200")
 
     def on_initial_position(self):
-        print("on_initial_position")
+        # print("on_initial_position")
         self.peg_in_hole_ctrl.timer.stop()
 
         self.up_ctrl.connect_widget.apply_Rot( np.array([0.4776, 0.3969, 0.2, 0, 0, 0]) )
 
     def on_random_position(self):
-        print("on_random_position")
+        # print("on_random_position")
         self.peg_in_hole_ctrl.timer.stop()
 
         # self.up_ctrl.connect_widget.apply_Rot(np.array([0.4500, 0.3969, 0.2, 0, 0, 0]))
@@ -226,7 +211,7 @@ class DiffusionPegInHoleWidget(QDialog):
         x = r * np.cos(angle) + self.peg_in_hole_ctrl.xy_tgt[0]
         y = r * np.sin(angle) + self.peg_in_hole_ctrl.xy_tgt[1]
 
-        random_pos = np.array([x, y, 0.18, 0, 0, 0]).astype(np.float64)
+        random_pos = np.array([x, y, 0.176, 0, 0, 0]).astype(np.float64)
         print(random_pos)
 
         self.up_ctrl.connect_widget.apply_Rot( random_pos )

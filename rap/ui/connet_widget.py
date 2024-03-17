@@ -254,7 +254,7 @@ class ConnectWidget(QWidget):
     def update_tgt(self):
 
         zero = self.up_ctrl.pre_action_dict['back zero'].copy()
-        print('in update tgt: ', self.up_ctrl.xyz_tgt)
+        # print('in update tgt: ', self.up_ctrl.xyz_tgt)
         for i in range(6):
             if i<3:
                 self.xyz_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i])
@@ -271,7 +271,7 @@ class ConnectWidget(QWidget):
 
         # self.update()
 
-        print('connet widget update tgt down')
+        # print('connet widget update tgt down')
 
     def get_tgt_xyz_rot(self):
         # for i in range(3):

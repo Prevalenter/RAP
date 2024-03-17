@@ -132,7 +132,7 @@ class MainWidget(QWidget):
 
     def update(self, tgt=False, cur=False, sent_tgt=False):
         if tgt:
-            print('update tgt!')
+            # print('update tgt!')
             self.connect_widget.update_tgt()
         if sent_tgt:
             self.connect_widget.apply_xyz()
