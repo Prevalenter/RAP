@@ -104,28 +104,6 @@ class ConnectWidget(QWidget):
         control_layout.addWidget(self.btn_radio_none, 1, 1)
         control_box.setLayout(control_layout)
 
-
-        # state_box = QGroupBox("Robot state")
-        # layout_state = QGridLayout()
-        #
-        # self.angle_le_list = []
-        #
-        # for i in range(2):
-        #     for j in range(3):
-        #         layout_state.addWidget(QLabel(f"Joint {2*i+j+1}"), i*2, j)
-        #         self.angle_le_list.append(QLineEdit(""))
-        #         layout_state.addWidget(self.angle_le_list[-1], i*2+1, j)
-        #
-        # self.xyz_le_list = []
-        # for idx, l in enumerate("XYZABC"):
-        #
-        #     layout_state.addWidget(QLabel(l), 4+(idx//3)*2, idx%3)
-        #     self.xyz_le_list.append(QLineEdit(""))
-        #     layout_state.addWidget(self.xyz_le_list[-1], 4+(idx//3)*2+1, idx%3)
-        #
-        # state_box.setLayout(layout_state)
-        # state_box.setMaximumHeight(240)
-
         angle_set_box = QGroupBox("Angle Set")
         layout_set_angle = QGridLayout()
         self.angle_spin_list = []
@@ -196,8 +174,7 @@ class ConnectWidget(QWidget):
         container = QVBoxLayout()
         container.addWidget(ip_box)
         container.addWidget(preset_box)
-        # container.addWidget(angle_set_box)
-        container.addWidget(control_box)
+        # container.addWidget(control_box)
         container.addWidget(xyz_set_box)
         container.addWidget(Rot_set_box)
         # container.addWidget(state_box)
@@ -237,7 +214,7 @@ class ConnectWidget(QWidget):
                 if len(msg_xyz)>=6:
 
                     self.up_ctrl.xyz_cur = [float(i) for i in msg_xyz[:6]]
-                    self.up_ctrl.axis.set_axis(self.up_ctrl.xyz_cur[:3], self.up_ctrl.xyz_cur[3:])
+                    # self.up_ctrl.axis.set_axis(self.up_ctrl.xyz_cur[:3], self.up_ctrl.xyz_cur[3:])
 
                     if self.data_xyz_init==False:
                         self.up_ctrl.xyz_tgt = self.up_ctrl.xyz_cur
@@ -248,13 +225,12 @@ class ConnectWidget(QWidget):
                 msg_ft = msg_rcv_slice.split(': ')[-1].split(' ')
                 if len(msg_ft)>=6:
                     self.up_ctrl.ft_cur = [float(i) for i in msg_ft[:6]]
-                    self.up_ctrl.ft.set_data(self.up_ctrl.ft_cur, self.up_ctrl.xyz_cur)
+                    # self.up_ctrl.ft.set_data(self.up_ctrl.ft_cur, self.up_ctrl.xyz_cur)
 
 
     def update_tgt(self):
 
         zero = self.up_ctrl.pre_action_dict['back zero'].copy()
-        # print('in update tgt: ', self.up_ctrl.xyz_tgt)
         for i in range(6):
             if i<3:
                 self.xyz_spin_list[i].setValue(self.up_ctrl.xyz_tgt[i])
@@ -268,38 +244,19 @@ class ConnectWidget(QWidget):
         self.Rot_spin_list[4].setValue(-(self.up_ctrl.xyz_tgt[4] - zero[4]))
         self.Rot_spin_list[5].setValue((self.up_ctrl.xyz_tgt[3] - zero[3]))
 
-
-        # self.update()
-
-        # print('connet widget update tgt down')
-
     def get_tgt_xyz_rot(self):
-        # for i in range(3):
-        #     pos_set_new[i] = pos_set[i]
-        #
-        # pos_set_new[3] = pos_set[5] + zero[3]
-        # pos_set_new[4] = -pos_set[4] + zero[4]
-        # pos_set_new[5] = -pos_set[3] + zero[5]
-        #
-        # self.up_ctrl.xyz_tgt = pos_set_new
+
         zero = self.up_ctrl.pre_action_dict['back zero']
         pos_set_new = np.zeros(6)
         pos_set = self.up_ctrl.xyz_tgt
         for i in range(3):
             pos_set_new[i] = pos_set[i]
 
-        # self.Rot_spin_list[3].setValue(-(self.up_ctrl.xyz_tgt[5] - zero[5]))
-        # self.Rot_spin_list[4].setValue(-(self.up_ctrl.xyz_tgt[4] - zero[4]))
-        # self.Rot_spin_list[5].setValue((self.up_ctrl.xyz_tgt[3] - zero[3]))
         pos_set_new[3] = -pos_set[5] + zero[5]
         pos_set_new[4] = -pos_set[4] + zero[4]
         pos_set_new[5] = pos_set[3] - zero[3]
 
-
         return pos_set_new
-
-
-        # return np.array([self.Rot_spin_list[i].value() for i in range(6)])
 
     def print_ft_cur(self):
         # pass
@@ -332,25 +289,23 @@ class ConnectWidget(QWidget):
 
     # Drag Compliance
     def on_force_radio_btn(self, b):
-        b_text = b.text()
-        # if =='Drag':
-        #     self.up_ctrl.drag_force_flag = True
-        # elif b.text()=='Compliance':
-        #     self.up_ctrl.drag_force_flag = False
-        for k in (self.up_ctrl.force_flag_dict):
-            # print(k)
-            if k==b_text and b.isChecked():
-                self.up_ctrl.force_flag_dict[k] = True
-            else:
-                self.up_ctrl.force_flag_dict[k] = False
-
-        if b_text=='Compliance' and b.isChecked():
-            self.up_ctrl.compliance_fa.x_r = self.up_ctrl.connect_widget.get_tgt_xyz_rot().copy()
-
-        if b_text=='Position Force' and b.isChecked():
-            self.up_ctrl.position_force_fa.x_r = self.up_ctrl.connect_widget.get_tgt_xyz_rot().copy()
-
-        print('force_flag_dict', self.up_ctrl.force_flag_dict)
+        pass
+        # b_text = b.text()
+        #
+        # for k in (self.up_ctrl.force_flag_dict):
+        #     # print(k)
+        #     if k==b_text and b.isChecked():
+        #         self.up_ctrl.force_flag_dict[k] = True
+        #     else:
+        #         self.up_ctrl.force_flag_dict[k] = False
+        #
+        # if b_text=='Compliance' and b.isChecked():
+        #     self.up_ctrl.compliance_fa.x_r = self.up_ctrl.connect_widget.get_tgt_xyz_rot().copy()
+        #
+        # if b_text=='Position Force' and b.isChecked():
+        #     self.up_ctrl.position_force_fa.x_r = self.up_ctrl.connect_widget.get_tgt_xyz_rot().copy()
+        #
+        # print('force_flag_dict', self.up_ctrl.force_flag_dict)
 
     # def on_check_drag_force(self):
     #     if self.check_drag_force.checkState()==0:
@@ -384,7 +339,7 @@ class ConnectWidget(QWidget):
         for i in range(6):
             self.up_ctrl.xyz_tgt[i] = self.xyz_spin_list[i].value()
 
-        self.up_ctrl.axis.set_axis(self.up_ctrl.xyz_tgt[:3], self.up_ctrl.xyz_tgt[3:])
+        # self.up_ctrl.axis.set_axis(self.up_ctrl.xyz_tgt[:3], self.up_ctrl.xyz_tgt[3:])
         self.write_tgt()
 
     def on_apply_Rot(self, pos_set=False):
@@ -395,11 +350,12 @@ class ConnectWidget(QWidget):
     def apply_Rot(self, pos_set):
         # print('before: ', pos_set)
         # cartesian space safe check
+        #
+        # xyz_lim = [self.up_ctrl.para_magager["Safe Region"].para["cartesian XYZ"][k] for k in \
+        #            self.up_ctrl.para_magager["Safe Region"].para["cartesian XYZ"]]
 
-        xyz_lim = [self.up_ctrl.para_magager["Safe Region"].para["cartesian XYZ"][k] for k in \
-                   self.up_ctrl.para_magager["Safe Region"].para["cartesian XYZ"]]
-        # print('*'*50)
-        # print('xyz_lim', xyz_lim)
+        xyz_lim = [[0.25, 0.65], [0.0, 0.5], [0.12, 1.0], [-0.6, 0.6], [-0.6, 0.6], [-3.14, 3.14]]
+
 
         for i in range(6):
             if i<3:
@@ -425,8 +381,8 @@ class ConnectWidget(QWidget):
         pos_set_new[5] = -pos_set[3] + zero[5]
 
         self.up_ctrl.xyz_tgt = pos_set_new
-        self.up_ctrl.axis.set_axis(pos_set_new[:3], pos_set_new[3:])
-        self.up_ctrl.ft.set_data(self.up_ctrl.ft_cur, pos_set_new)
+        # self.up_ctrl.axis.set_axis(pos_set_new[:3], pos_set_new[3:])
+        # self.up_ctrl.ft.set_data(self.up_ctrl.ft_cur, pos_set_new)
         self.write_tgt()
 
     def write_tgt(self):
@@ -455,6 +411,22 @@ class MyWindow(QWidget):
         self.xyz_cur = [0]*6
         self.angle_cur = [0]*6
         self.ft_cur = [0]*6
+
+        self.pre_action_dict = {
+            'back zero': [0.4, 0.0, 0.8, 3.14159, 0, 3.14159],
+            'compliance zero': [0.4, 0.2, 0.6, 3.14159, 0.0, 3.14159],
+            'contact zero': [0.6360, 0.125, 0.18, 3.14159, 0.0, 3.14159],
+            # 'test': [0.4000158067460178, 0.0, 0.8000742610857445, 3.14159, 0.0, 3.14159],
+            # 'to hole': [0.6363, 0.15408, 0.18055, 3.14159, 0, 3.14159],
+            'to hole': [0.6363, 0.15408, 0.20, 3.14159, 0, 3.14159]
+        }
+
+        self.force_flag_dict = {
+            'Drag': False,
+            'Compliance': False,
+            'Position Force': False,
+            'None': True
+        }
 
         self.connect_widget = ConnectWidget(up_ctrl=self)
         self.connect_widget.setParent(self)
